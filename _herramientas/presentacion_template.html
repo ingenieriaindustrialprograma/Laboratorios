@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorios y Microcurrículos de Ingeniería Industrial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Concepto: tablero de análisis de una dirección de programa. Barra lateral de secciones, escenario central, ficha lateral por asignatura.
+   Los cinco laboratorios tienen un color fijo en todo el documento. */
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --surface2:#eceff4; --ink:#14181f; --ink2:#3a4352; --ink3:#667085; --line:#dbe0e8;
+  --accent:#1f3a8a; --accent-soft:#e2e8fa; --good:#177a4b; --warn:#a8510a; --bad:#b42318;
+  --c-fin:#009E73; --c-geio:#E69F00; --c-log:#0072B2; --c-mf:#D55E00; --c-con:#CC79A7;
+  --on-fin:#03140e; --on-geio:#1b1200; --on-log:#ffffff; --on-mf:#1b0900; --on-con:#1f0c16;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.06);
+  --display:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --surface:#151b24; --surface2:#1c2431; --ink:#eef1f6; --ink2:#c2cad8; --ink3:#8e99ad; --line:#2a3342;
+    --accent:#9db6ff; --accent-soft:#1d2848; --good:#4cc38a; --warn:#f0a35a; --bad:#ff8077;
+    --c-log:#3da0e0; --on-log:#04121c; --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --surface:#151b24; --surface2:#1c2431; --ink:#eef1f6; --ink2:#c2cad8; --ink3:#8e99ad; --line:#2a3342;
+  --accent:#9db6ff; --accent-soft:#1d2848; --good:#4cc38a; --warn:#f0a35a; --bad:#ff8077;
+  --c-log:#3da0e0; --on-log:#04121c; --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:22px;line-height:1.2}
+h3{font-size:15px;line-height:1.3}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.top{position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);max-width:1320px;margin:0 auto}
+.brand{display:flex;flex-direction:column;min-width:0}
+.brand b{font:600 15px var(--display)}
+.brand span{color:var(--ink3);font-size:12px}
+.spacer{flex:1}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--ink2)}
+.ghost:hover{background:var(--surface2)}
+.shell{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:208px minmax(0,1fr);gap:24px;padding-top:20px}
+#rail{position:sticky;top:70px;align-self:start;display:flex;flex-direction:column;gap:2px}
+#rail button{text-align:left;background:transparent;border:0;border-radius:8px;padding:8px 10px;color:var(--ink2);display:flex;gap:8px;align-items:baseline}
+#rail button small{color:var(--ink3);font-variant-numeric:tabular-nums;min-width:16px}
+#rail button:hover{background:var(--surface2)}
+#rail button[aria-current="page"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+#stage{min-width:0;outline:none}
+.slide{display:flex;flex-direction:column;gap:18px}
+.slide>header{display:flex;flex-direction:column;gap:4px}
+.slide>header p{color:var(--ink2);max-width:72ch}
+.nav2{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+.nav2 button{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+.nav2 button:hover{background:var(--surface2)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);min-width:0}
+.grid{display:grid;gap:14px;min-width:0}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.eyebrow{font:600 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.hero{padding:26px 0 6px;display:flex;flex-direction:column;gap:10px}
+.hero h1{font-size:40px;line-height:1.05;max-width:18ch}
+.lead{font-size:16px;color:var(--ink2);max-width:66ch}
+.kpi b{display:block;font:700 30px var(--display);font-variant-numeric:tabular-nums}
+.kpi span{color:var(--ink3);font-size:12px}
+.sub{color:var(--ink3);font-size:12px}
+.muted{color:var(--ink3)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 8px 1px 6px;background:var(--surface);white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--lc,var(--ink3));flex:none}
+.pill{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:11px;font-weight:600;border-radius:6px;padding:1px 7px;border:1px solid currentColor}
+.p-alto,.p-bad{color:var(--bad)}.p-medio,.p-warn{color:var(--warn)}.p-bajo{color:var(--ink3)}.p-good{color:var(--good)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:3px 8px;font-size:12px;color:var(--ink);text-align:left}
+.chip:hover{background:var(--surface2)}
+.chip b{font-variant-numeric:tabular-nums}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:6px 12px;color:var(--ink2);border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.bar-row{display:grid;grid-template-columns:minmax(90px,200px) minmax(0,1fr) 76px;gap:10px;align-items:center;padding:3px 0;background:none;border:0;width:100%;text-align:left}
+button.bar-row:hover .bar span{filter:brightness(1.08)}
+.bar{height:12px;border-radius:3px;background:var(--surface2);overflow:hidden;position:relative}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:3px 3px 3px 3px}
+.bar-row .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.stack{display:flex;height:22px;border-radius:5px;overflow:hidden;gap:2px;background:var(--surface2)}
+.stack>*{min-width:3px;border:0;padding:0;background:var(--lc,var(--accent));color:var(--on,var(--ink));font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2)}
+.legend button{background:none;border:0;padding:2px 0;display:inline-flex;align-items:center;gap:6px;color:inherit}
+.legend button[aria-pressed="true"]{font-weight:700;color:var(--ink)}
+.legend .dot{border-radius:3px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:var(--surface2);font-weight:600;font-size:12px;color:var(--ink2);white-space:nowrap}
+th.s{cursor:pointer}
+tbody tr:hover{background:var(--surface2)}
+tr.click{cursor:pointer}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.mini{display:flex;height:8px;border-radius:2px;overflow:hidden;gap:1px;width:96px;background:var(--surface2)}
+.mini i{display:block;height:100%}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tools input[type=search],.tools select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+.tools input[type=search]{width:100%}
+.malla{display:grid;grid-template-columns:repeat(12,minmax(150px,1fr));gap:8px;overflow-x:auto;padding-bottom:8px}
+.col h3{font-size:12px;color:var(--ink3);font-weight:600;padding:0 2px 6px;border-bottom:2px solid var(--line);margin-bottom:8px}
+.col{display:flex;flex-direction:column;gap:6px}
+.node{display:block;width:100%;text-align:left;border:1px solid var(--line);border-left:5px solid var(--lc,var(--ink3));border-radius:8px;background:var(--surface);padding:6px 8px;font-size:12px;line-height:1.3}
+.node b{display:block;font-variant-numeric:tabular-nums}
+.node.dim{opacity:.28}
+.node.sel{outline:2px solid var(--accent);outline-offset:1px}
+.node.pre{box-shadow:0 0 0 2px var(--good)}
+.node.dep{box-shadow:0 0 0 2px var(--warn)}
+.node .sm{color:var(--ink3);font-size:11px}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(680px,100%);background:var(--bg);border-left:1px solid var(--line);z-index:40;overflow-y:auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 40px 20px;box-shadow:-12px 0 40px rgba(0,0,0,.18)}
+#drawer .dh{position:sticky;top:0;background:var(--bg);padding:16px 0 10px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;z-index:2}
+#drawer section{padding:14px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+#scrim{position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:30}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--bg);padding:7px 10px;border-radius:8px;font-size:12px;max-width:320px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+ul.l{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+ol.l{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.cell{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:24px;border-radius:5px;font-size:12px;font-weight:700;background:var(--lc);color:var(--on)}
+.cell.out{background:transparent;color:var(--ink2);border:1.5px solid var(--lc)}
+.cell.minus{background:transparent;color:var(--bad);border:1.5px dashed var(--bad)}
+.hm td,.hm th{text-align:center;padding:5px 8px}
+.hm td.l,.hm th.l{text-align:left}
+.cov{display:inline-block;width:22px;height:22px;border-radius:5px;line-height:22px;text-align:center;font-weight:700;font-size:12px}
+.cov2{background:var(--good);color:var(--bg)}.cov1{background:var(--warn);color:var(--bg)}.cov0{background:transparent;border:1.5px solid var(--bad);color:var(--bad)}
+.tile{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface2)}
+.tile b{font:700 20px var(--display)}
+.tile span{font-size:12px;color:var(--ink2)}
+.band{height:6px;border-radius:3px;background:var(--lc);margin-bottom:10px}
+.cols{display:flex;gap:3px;align-items:flex-end;height:130px}
+.cols>div{flex:1 1 0;min-width:0;background:var(--accent);border-radius:3px 3px 0 0;min-height:2px}
+.cols>div.bad{background:var(--warn)}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink2)}
+.field input[type=number],.field select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:100%}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.res{display:flex;flex-direction:column;gap:2px;border-radius:10px;padding:12px;border:1px solid var(--line)}
+.res b{font:700 18px var(--display)}
+.ok{border-color:var(--good)}.ok b{color:var(--good)}
+.no{border-color:var(--bad)}.no b{color:var(--bad)}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:12px}
+  #rail{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  #rail button{white-space:nowrap}
+  .g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}
+  .hero h1{font-size:30px}
+  .bar-row{grid-template-columns:minmax(80px,120px) minmax(0,1fr) 70px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>Laboratorios y microcurrículos</b><span>Ingeniería Industrial · UTP · FACIEM</span></div>
+  <div class="spacer"></div>
+  <button class="ghost" id="theme" type="button" aria-label="Cambiar tema claro u oscuro">Tema</button>
+</header>
+<div class="shell">
+  <nav id="rail" aria-label="Secciones"></nav>
+  <main id="stage" tabindex="-1"></main>
+</div>
+<div id="scrim" hidden></div>
+<aside id="drawer" hidden aria-label="Ficha de asignatura"></aside>
+<div id="tip" hidden></div>
+<script id="data" type="application/json">/*__DATA__*/</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const S = D.subjects, LABS = D.labs, LID = D.labIds;
+const LN = {FIN:'Financiero',GEIO:'GEIO',LOG:'Logística',MF:'Manufactura Flexible',CON:'Consultorio'};
+const $ = (q, el=document) => el.querySelector(q);
+const lc = id => 'var(--c-' + id.toLowerCase() + ')';
+const lon = id => 'var(--on-' + id.toLowerCase() + ')';
+const fmt = n => n.toLocaleString('es-CO');
+const sum = (a, f) => a.reduce((t, x) => t + (f ? f(x) : x), 0);
+const countBy = (a, f) => { const m = {}; a.forEach(x => { const k = f(x); m[k] = (m[k] || 0) + 1; }); return m; };
+const ord = n => n ? n + '.º' : 'Elec.';
+const short = (t, n=30) => t.length > n ? t.slice(0, n - 1) + '…' : t;
+const hrs = s => s.had + s.hti;
+
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in (props || {})) {
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (k === 'style' && typeof v === 'object') { for (const p in v) { if (p.startsWith('--')) e.style.setProperty(p, v[p]); else e.style[p] = v[p]; } }
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return e;
+}
+function svg(tag, attrs) { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+const tip = $('#tip');
+function bindTip(el, content) {
+  const move = e => {
+    tip.innerHTML = typeof content === 'function' ? content() : content; tip.hidden = false;
+    const w = tip.offsetWidth, hh = tip.offsetHeight; let x = e.clientX + 14, y = e.clientY + 14;
+    if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + hh > innerHeight - 8) y = e.clientY - hh - 14;
+    tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+  };
+  el.addEventListener('mousemove', move); el.addEventListener('mouseleave', () => { tip.hidden = true; });
+  return el;
+}
+const esc = t => String(t).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+const labTag = (id, full) => h('span', {class:'tag', style:{'--lc':lc(id)}}, h('span', {class:'dot'}), full ? LABS[id].name : LN[id]);
+const sChip = s => h('button', {class:'chip', type:'button', title:s.name, style:{'--lc':lc(s.asg.prim)}, onclick:() => openSubject(s.id)}, h('span', {class:'dot'}), h('b', null, s.code), ' ', short(s.name, 26));
+const chipsOf = ids => h('div', {class:'chips'}, ids.map(i => sChip(S[i])));
+const sev = v => h('span', {class:'pill p-' + v}, (v === 'alto' ? '▲ ' : v === 'medio' ? '● ' : '○ ') + 'prioridad ' + v);
+const estPill = e => h('span', {class:'pill ' + (e === 'Coincide' ? 'p-good' : e === 'Cambia' ? 'p-warn' : 'p-bajo')}, (e === 'Coincide' ? '✓ ' : e === 'Cambia' ? '↻ ' : '＋ ') + e.toLowerCase());
+const fitPill = f => h('span', {class:'pill ' + (f === 'Alto' ? 'p-good' : 'p-warn')}, 'ajuste ' + f.toLowerCase());
+function stack(segs) {
+  const tot = sum(segs, s => s.v) || 1;
+  return h('div', {class:'stack'}, segs.filter(s => s.v > 0).map(s => {
+    const b = h('button', {type:'button', style:{flex:s.v / tot + ' 1 0', '--lc':s.color, '--on':s.on || 'var(--bg)'}, onclick:s.onClick || null, 'aria-label':s.label + ': ' + s.v}, s.show === false ? '' : String(s.v));
+    return bindTip(b, () => '<b>' + esc(s.label) + '</b>: ' + s.v);
+  }));
+}
+function barRows(items, o={}) {
+  const max = o.max || Math.max(1, ...items.map(i => i.value));
+  return h('div', null, items.map(i => {
+    const row = h(i.onClick ? 'button' : 'div', {class:'bar-row', type:i.onClick ? 'button' : null, onclick:i.onClick || null},
+      h('span', null, i.label, i.sub ? h('span', {class:'sub'}, ' ' + i.sub) : null),
+      h('div', {class:'bar'}, h('span', {style:{width:(i.value / max * 100) + '%', background:i.color || 'var(--accent)'}})),
+      h('span', {class:'v'}, i.vtext != null ? i.vtext : String(i.value)));
+    return row;
+  }));
+}
+function header(t, p) { return h('header', null, h('h2', null, t), p ? h('p', null, p) : null); }
+
+/* ---------------- ficha de asignatura ---------------- */
+function openSubject(id) {
+  const s = S[id], a = s.asg, d = $('#drawer');
+  const kv = (k, v) => h('div', {class:'tile'}, h('b', null, v), h('span', null, k));
+  const evalBar = h('div', {class:'stack'}, s.eval.map((e, i) => h('div', {style:{flex:(e.p || 0) + ' 1 0', '--lc':'var(--accent)', opacity:String(1 - (i % 4) * .18), '--on':'var(--bg)'}}, e.p + '%')));
+  d.replaceChildren(
+    h('div', {class:'dh'}, h('div', {style:{flex:'1',minWidth:'0'}}, h('div', {class:'eyebrow'}, s.code + ' · ' + s.area + ' · ' + s.type), h('h2', null, s.name)),
+      h('button', {class:'ghost', type:'button', onclick:closeDrawer, 'aria-label':'Cerrar ficha'}, 'Cerrar ✕')),
+    h('section', null, h('div', {class:'grid g4'}, kv('semestre (malla de 10)', ord(s.sem)), kv('créditos / ECTS', s.cred + ' / ' + s.ects), kv('HAD + HTI', s.had + ' + ' + s.hti), kv('RAP', s.rap.join(', ') || '—')),
+      h('div', {class:'sub'}, 'Se imparte en: ' + s.semTxt + ' · actualización: ' + s.upd + ' · coordinador: ' + (s.coord || '— (no declarado)'))),
+    h('section', {style:{'--lc':lc(a.prim)}}, h('h3', null, 'Asignación de laboratorio propuesta'),
+      h('div', {class:'chips'}, labTag(a.prim, true), fitPill(a.fit), estPill(a.estado), a.mod ? h('span', {class:'pill p-bajo'}, 'modalidad ' + a.mod.toLowerCase()) : null),
+      h('p', null, h('b', null, 'Por qué: '), a.why), h('p', null, h('b', null, 'Práctica: '), a.pract), h('p', null, h('b', null, 'Evidencia evaluable: '), a.prod),
+      h('p', null, h('b', null, 'Peso y horas: '), a.peso + '% de la nota final · ' + a.horas + ' h de las ' + s.had + ' HAD'),
+      h('p', null, h('b', null, 'Convierte (no suma carga): '), a.conv),
+      h('div', {class:'chips'}, h('span', {class:'sub'}, 'Complementarios:'), a.comps.length ? a.comps.map(c => labTag(c)) : h('span', {class:'sub'}, 'ninguno'), h('span', {class:'sub'}, ' · Hoy declara:'), a.antes.length ? a.antes.map(c => labTag(c)) : h('span', {class:'sub'}, s.generic ? 'laboratorios de FACIEM (genérico)' : 'ningún laboratorio'))),
+    h('section', null, h('h3', null, 'Descripción y objetivo'), h('p', null, s.desc || '—'), h('p', null, h('b', null, 'Objetivo: '), s.obj || '—')),
+    h('section', null, h('h3', null, 'Resultados de aprendizaje (' + s.outcomes.length + ')'), s.outcomes.length ? h('ul', {class:'l'}, s.outcomes.map(o => h('li', null, o))) : h('p', {class:'muted'}, 'No identificados.'),
+      h('div', {class:'sub'}, 'Formación integral: ' + (s.comps.join(', ') || '—'))),
+    h('section', null, h('h3', null, 'Contenido (' + s.units.length + ' unidades)'),
+      h('div', {class:'tw'}, h('table', null, h('thead', null, h('tr', null, h('th', null, 'Unidad'), h('th', {class:'n'}, 'HAD'), h('th', {class:'n'}, 'HTI'))),
+        h('tbody', null, s.units.map(u => h('tr', null, h('td', null, h('b', null, u.t || ''), u.t ? ' ' : '', u.d), h('td', {class:'n'}, u.had == null ? '—' : u.had), h('td', {class:'n'}, u.hti == null ? '—' : u.hti))))))),
+    h('section', null, h('h3', null, 'Evaluación (suma ' + s.evalSum + '%)'), s.eval.length ? evalBar : null,
+      h('ul', {class:'l'}, s.eval.map(e => h('li', null, h('b', null, e.p + '%'), ' ' + e.a))), s.evalSum !== 100 ? h('div', null, h('span', {class:'pill p-bad'}, '▲ la tabla no suma 100%')) : null),
+    h('section', null, h('h3', null, 'Requisitos'),
+      h('div', {class:'chips'}, s.reqIds.map(i => sChip(S[i])), s.reqExt.map(t => h('span', {class:'tag'}, t + ' (fuera de la carpeta)')), s.reqNote ? h('span', {class:'tag'}, s.reqNote) : null, !s.reqIds.length && !s.reqExt.length && !s.reqNote ? h('span', {class:'sub'}, s.req || 'Ninguno') : null),
+      (() => { const dep = S.filter(x => x.reqIds.includes(s.id)); return dep.length ? h('div', null, h('div', {class:'sub'}, 'Es requisito de:'), chipsOf(dep.map(x => x.id))) : null; })()),
+    h('section', null, h('h3', null, 'Trabajos en laboratorio y proyectos (sección 8 original)'), h('p', null, s.lab8 || '— (vacía)'),
+      h('div', {class:'sub'}, 'TIC: ' + (s.tic.join('; ') || '—')), h('div', {class:'sub'}, 'Métodos: ' + (s.methods.join('; ') || '—')),
+      h('div', {class:'sub'}, s.bibN + ' referencias · archivo fuente: ' + s.archivo))
+  );
+  d.hidden = false; $('#scrim').hidden = false; d.scrollTop = 0; $('#scrim').onclick = closeDrawer;
+}
+function closeDrawer() { $('#drawer').hidden = true; $('#scrim').hidden = true; }
+
+/* ---------------- 1. Resumen ---------------- */
+function rResumen() {
+  const m = D.meta, prim = countBy(S, s => s.asg.prim), est = countBy(S, s => s.asg.estado);
+  const nowPct = Math.round(m.nowDeclared / m.n * 100);
+  return h('section', {class:'slide'},
+    h('div', {class:'hero'}, h('div', {class:'eyebrow'}, 'Ingeniería Industrial · UTP · FACIEM'), h('h1', null, 'Cada asignatura, un laboratorio'),
+      h('p', {class:'lead'}, 'Análisis de ' + m.n + ' microcurrículos y 5 espacios de laboratorio, y una propuesta para que todas las asignaturas tengan un laboratorio con componente evaluativo y aprobatorio.')),
+    h('div', {class:'grid g4'}, [[m.n, 'asignaturas'], [m.cred, 'créditos'], [fmt(m.had + m.hti), 'horas de contenido (HAD + HTI)'], ['5', 'espacios de laboratorio']].map(k => h('div', {class:'card kpi'}, h('b', null, k[0]), h('span', null, k[1])))),
+    h('div', {class:'grid g2'},
+      h('div', {class:'card'}, h('h3', null, 'Del uso actual a la propuesta'), h('p', {class:'sub'}, 'Microcurrículos que nombran al menos un laboratorio'),
+        barRows([{label:'Hoy', value:m.nowDeclared, vtext:m.nowDeclared + ' de ' + m.n, color:'var(--ink3)'}, {label:'Propuesta', value:m.n, vtext:m.n + ' de ' + m.n, color:'var(--accent)'}], {max:m.n}),
+        h('p', {class:'sub'}, 'Frente a lo que declaran hoy los microcurrículos:'), stack([{v:est.Coincide, color:'var(--good)', label:'Coincide'}, {v:est.Cambia, color:'var(--warn)', label:'Cambia el laboratorio principal'}, {v:est.Nuevo, color:'var(--ink3)', label:'Sin antecedente (nuevo)'}]),
+        h('div', {class:'legend'}, h('span', null, '■ coincide ' + est.Coincide), h('span', null, '■ cambia ' + est.Cambia), h('span', null, '■ nuevo ' + est.Nuevo))),
+      h('div', {class:'card'}, h('h3', null, 'Laboratorio principal por asignatura'),
+        stack(LID.map(l => ({v:prim[l] || 0, color:lc(l), on:lon(l), label:LABS[l].name, onClick:() => go('asignacion')}))),
+        h('div', {class:'legend'}, LID.map(l => h('span', {style:{'--lc':lc(l)}}, h('span', {class:'tag'}, h('span', {class:'dot'}), LN[l] + ' · ' + (prim[l] || 0))))),
+        h('p', {class:'sub'}, 'Ajuste Alto: ' + S.filter(s => s.asg.fit === 'Alto').length + ' · Medio: ' + S.filter(s => s.asg.fit === 'Medio').length + ' · horas de laboratorio propuestas: ' + m.horasLab))),
+    h('div', {class:'card'}, h('h3', null, 'Lo que mostró el análisis'),
+      h('ul', {class:'l'},
+        h('li', null, 'Los laboratorios proponen usos en 6 a 10 asignaturas, pero solo 1 de cada 6–10 aparece confirmada en el microcurrículo.'),
+        h('li', null, 'Solo ' + m.nowDeclared + ' de ' + m.n + ' microcurrículos nombran un laboratorio y ' + D.findings[3].ids.length + ' tienen vacía la sección de laboratorio y proyectos.'),
+        h('li', null, 'Hay 3 códigos repetidos, ' + D.findings[1].ids.length + ' tablas de evaluación que no suman 100 % y ' + D.findings.find(f => f.k.startsWith('Semestre declarado')).ids.length + ' microcurrículos que declaran 11.º o 12.º semestre en un programa de 10.'),
+        h('li', null, 'Logística tiene cómputo y software obsoletos; Manufactura Flexible no tiene normas de seguridad escritas; Financiero y Consultorio perdieron su espacio tras el sismo del 10 de agosto de 2026.'))),
+    h('div', {class:'nav2'}, h('span'), h('button', {type:'button', onclick:() => go('programa')}, 'Explorar el programa →')));
+}
+
+/* ---------------- 2. Programa ---------------- */
+const st = {prog:{q:'', area:'Todas', tipo:'Todos', lab:'Todos', sort:'sem', dir:1}, malla:{color:'lab', sel:null, view:'m10'}, est:{tab:'carga'}, lab:{tab:'FIN'}, mat:{mode:'prop', estado:'Todos', q:''}, asg:{lab:'Todos'}, ev:{id:null, w:null}};
+function rPrograma() {
+  const p = st.prog, areas = ['Todas', ...new Set(S.map(s => s.area))];
+  const info = h('div', {class:'sub'}), tbody = h('tbody'), thead = h('thead');
+  const cols = [['sem','Sem.'],['code','Código'],['name','Asignatura'],['area','Área'],['type','Tipo'],['cred','Créd.'],['hours','Horas'],['rap','RAP'],['prim','Laboratorio'],['fit','Ajuste']];
+  const key = (s, k) => ({sem:s.sem || 99, code:s.code, name:s.name, area:s.area, type:s.type, cred:s.cred, hours:hrs(s), rap:s.rap[0] || '', prim:s.asg.prim, fit:s.asg.fit})[k];
+  function draw() {
+    const q = p.q.toLowerCase();
+    let rows = S.filter(s => (p.area === 'Todas' || s.area === p.area) && (p.tipo === 'Todos' || s.type === p.tipo) && (p.lab === 'Todos' || s.asg.prim === p.lab) &&
+      (!q || (s.code + ' ' + s.name + ' ' + s.desc + ' ' + s.coord).toLowerCase().includes(q)));
+    rows.sort((a, b) => { const x = key(a, p.sort), y = key(b, p.sort); return (x > y ? 1 : x < y ? -1 : a.id - b.id) * p.dir; });
+    info.textContent = rows.length + ' asignaturas · ' + sum(rows, s => s.cred || 0) + ' créditos · ' + fmt(sum(rows, hrs)) + ' horas';
+    thead.replaceChildren(h('tr', null, cols.map(c => h('th', {class:'s' + (['cred','hours'].includes(c[0]) ? ' n' : ''), onclick:() => { if (p.sort === c[0]) p.dir *= -1; else { p.sort = c[0]; p.dir = 1; } draw(); }}, c[1] + (p.sort === c[0] ? (p.dir > 0 ? ' ▲' : ' ▼') : '')))));
+    tbody.replaceChildren(...rows.map(s => {
+      const tr = h('tr', {class:'click', tabindex:'0', onclick:() => openSubject(s.id), onkeydown:e => { if (e.key === 'Enter') openSubject(s.id); }},
+        h('td', null, ord(s.sem)), h('td', null, h('b', null, s.code)), h('td', null, s.name), h('td', null, s.area), h('td', null, s.type === 'Obligatoria' ? 'Oblig.' : 'Electiva'),
+        h('td', {class:'n'}, s.cred), h('td', {class:'n'}, h('div', {style:{display:'flex',gap:'8px',alignItems:'center',justifyContent:'flex-end'}}, hrs(s), h('div', {class:'mini'}, h('i', {style:{width:(s.had / 160 * 100) + '%', background:'var(--accent)'}}), h('i', {style:{width:(s.hti / 160 * 100) + '%', background:'var(--ink3)'}})))),
+        h('td', null, s.rap.join(', ') || '—'), h('td', null, labTag(s.asg.prim)), h('td', null, fitPill(s.asg.fit)));
+      return tr;
+    }));
+  }
+  const sel = (label, opts, k, map) => h('label', {class:'field'}, label, h('select', {id:'prog-' + k, onchange:e => { p[k] = e.target.value; draw(); }}, opts.map(o => h('option', {value:o, selected:p[k] === o}, map ? map(o) : o))));
+  const root = h('section', {class:'slide'}, header('Programa: las 39 asignaturas', 'Filtre, ordene y abra la ficha completa de cada asignatura: contenido con horas, resultados, evaluación, requisitos y la asignación de laboratorio propuesta.'),
+    h('div', {class:'tools'}, h('label', {class:'field', style:{flex:'1 1 220px'}}, 'Buscar', h('input', {type:'search', id:'prog-q', value:p.q, placeholder:'código, nombre, coordinador o texto…', oninput:e => { p.q = e.target.value; draw(); }})),
+      sel('Área', areas, 'area'), sel('Tipo', ['Todos','Obligatoria','Electiva'], 'tipo'), sel('Laboratorio principal', ['Todos', ...LID], 'lab', o => o === 'Todos' ? o : LN[o])),
+    info, h('div', {class:'tw'}, h('table', null, thead, tbody)));
+  draw(); return root;
+}
+
+/* ---------------- 3. Malla ---------------- */
+function rMalla() {
+  const m = st.malla, host = h('div'), detail = h('div', {class:'card'}), issues = h('div', {class:'card'}), legend = h('div', {class:'legend'}), note = h('p', {class:'sub'});
+  const semOf = s => m.view === 'decl' ? s.semDecl : s.sem;
+  const colorOf = s => m.color === 'lab' ? lc(s.asg.prim) : m.color === 'fit' ? (s.asg.fit === 'Alto' ? 'var(--accent)' : 'var(--ink3)') : (s.asg.estado === 'Coincide' ? 'var(--good)' : s.asg.estado === 'Cambia' ? 'var(--warn)' : 'var(--ink3)');
+  const dotTag = (c, t) => h('span', {class:'tag', style:{'--lc':c}}, h('span', {class:'dot'}), t);
+  const semLbl = s => m.view === 'decl' ? (s.semDecl ? s.semDecl + '.º' : '—') : ord(s.sem);
+  function draw() {
+    const sel = m.sel != null ? S[m.sel] : null;
+    const pre = sel ? sel.reqIds : [], dep = sel ? S.filter(x => x.reqIds.includes(sel.id)).map(x => x.id) : [];
+    const node = s => h('button', {type:'button', class:'node' + (sel ? (s.id === sel.id ? ' sel' : pre.includes(s.id) ? ' pre' : dep.includes(s.id) ? ' dep' : ' dim') : ''), style:{'--lc':colorOf(s)}, onclick:() => { m.sel = m.sel === s.id ? null : s.id; draw(); }},
+      h('b', null, s.code + (s.type === 'Electiva' ? ' · electiva' : '')), short(s.name, 34), h('div', {class:'sm'}, hrs(s) + ' h · ' + LN[s.asg.prim]));
+    const col = (title, list) => h('div', {class:'col'}, h('h3', null, title + ' · ' + sum(list, s => s.cred || 0) + ' créd.'), list.map(node));
+    const cols = [], n = m.view === 'decl' ? 12 : 10;
+    for (let k = 1; k <= n; k++) cols.push(col(k + '.º semestre', S.filter(s => semOf(s) === k)));
+    if (m.view !== 'decl') cols.push(col('Electivas (7.º–10.º)', S.filter(s => s.type === 'Electiva')));
+    host.replaceChildren(h('div', {class:'malla', style:{gridTemplateColumns:'repeat(' + cols.length + ',minmax(150px,1fr))'}}, cols));
+    note.textContent = m.view === 'decl' ? 'Semestres tal como los declaran los microcurrículos: llegan hasta el 12.º, que no existe en una malla de 10 semestres.' : 'El semestre se infiere del primer dígito del código del curso (0 = 10.º). Las electivas profesionales se ofrecen del 7.º al 10.º.';
+    legend.replaceChildren(...(m.color === 'lab' ? LID.map(l => dotTag(lc(l), LN[l])) : m.color === 'fit' ? [dotTag('var(--accent)', 'ajuste alto'), dotTag('var(--ink3)', 'ajuste medio')] : [dotTag('var(--good)', '✓ coincide'), dotTag('var(--warn)', '↻ cambia'), dotTag('var(--ink3)', '＋ nuevo')]),
+      h('span', {class:'sub'}, 'Contorno verde: requisito · naranja: depende de la seleccionada'));
+    const late = sel ? pre.filter(i => semOf(S[i]) && semOf(sel) && semOf(S[i]) > semOf(sel)) : [];
+    detail.replaceChildren(sel ? h('div', {style:{display:'flex',flexDirection:'column',gap:'8px'}},
+      h('h3', null, sel.code + ' · ' + sel.name + ' (' + semLbl(sel) + ')'),
+      h('div', {class:'sub'}, 'Requisito declarado: ' + (sel.req || 'ninguno')),
+      h('div', null, h('b', null, 'Exige: '), pre.length ? chipsOf(pre) : h('span', {class:'muted'}, 'ninguna asignatura de la carpeta'), sel.reqExt.length ? h('div', {class:'sub'}, 'Fuera de la carpeta: ' + sel.reqExt.join(', ')) : null),
+      h('div', null, h('b', null, 'Habilita: '), dep.length ? chipsOf(dep) : h('span', {class:'muted'}, 'ninguna')),
+      late.length ? h('div', null, h('span', {class:'pill p-bad'}, '▲ secuencia contradictoria'), ' El requisito ' + late.map(i => S[i].code + ' (' + semLbl(S[i]) + ')').join(', ') + ' está después de ' + semLbl(sel) + '.') : null,
+      h('div', null, h('button', {class:'ghost', type:'button', onclick:() => openSubject(sel.id)}, 'Abrir ficha completa'))) :
+      h('p', {class:'muted'}, 'Seleccione una asignatura para ver sus requisitos y qué habilita.'));
+    const pairs = [];
+    S.forEach(s => s.reqIds.forEach(j => { const a = semOf(s), b = semOf(S[j]); if (a && b && b > a) pairs.push([s.id, j]); }));
+    issues.replaceChildren(h('h3', null, 'Secuencias contradictorias en esta vista (' + pairs.length + ')'), pairs.length ? h('ul', {class:'l'}, pairs.map(pr => h('li', null, h('b', null, S[pr[0]].code + ' ' + S[pr[0]].name), ' (' + semLbl(S[pr[0]]) + ') exige ', h('b', null, S[pr[1]].code + ' ' + S[pr[1]].name), ' (' + semLbl(S[pr[1]]) + ')'))) : h('p', {class:'muted'}, 'Ninguna.'),
+      h('p', {class:'sub'}, 'Con los semestres declarados aparecen contradicciones en Producción (Producción I exige Ingeniería de Métodos y Producción II exige Salud Ocupacional, ambas declaradas un semestre después). Con la malla de 10 por código esas desaparecen y queda Contabilidad y Economía.'));
+  }
+  const seg = (arr, key) => { const el = h('div', {class:'seg', role:'group'}, arr.map(o => h('button', {type:'button', 'aria-pressed':String(m[key] === o[0]), onclick:e => { m[key] = o[0]; [...el.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); draw(); }}, o[1]))); return el; };
+  const root = h('section', {class:'slide'}, header('Malla de 10 semestres', 'Las asignaturas por semestre, con las electivas profesionales del 7.º al 10.º. Seleccione una para resaltar sus requisitos y qué habilita.'),
+    h('div', {class:'tools'}, seg([['m10','Malla de 10 (según código)'],['decl','Declarado en el microcurrículo']], 'view'), seg([['lab','Color: laboratorio'],['fit','Color: ajuste'],['est','Color: estado']], 'color'), legend), note, host, detail, issues);
+  draw(); return root;
+}
+
+/* ---------------- 4. Estructura académica ---------------- */
+function detailBox() { return h('div', {class:'card', style:{minHeight:'60px'}}, h('span', {class:'muted'}, 'Haga clic en una barra para ver las asignaturas.')); }
+function rEstructura() {
+  const t = st.est, body = h('div', {style:{display:'flex',flexDirection:'column',gap:'14px'}});
+  const tabs = [['carga','Carga horaria'],['rap','RAP y competencias'],['eval','Evaluación'],['bib','Bibliografía'],['tools','Herramientas']];
+  function show(box, title, ids) { box.replaceChildren(h('h3', null, title + ' (' + ids.length + ')'), chipsOf(ids)); }
+  function draw() {
+    let el;
+    if (t.tab === 'carga') {
+      const areas = [...new Set(S.map(s => s.area))];
+      el = h('div', {style:{display:'flex',flexDirection:'column',gap:'14px'}},
+        h('div', {class:'card'}, h('h3', null, 'Horas por área (HAD y HTI)'), h('div', {class:'legend'}, h('span', null, '■ HAD (acompañamiento directo)'), h('span', null, '■ HTI (trabajo independiente)')),
+          areas.map(a => { const l = S.filter(s => s.area === a); return h('div', {style:{margin:'8px 0'}}, h('div', {class:'sub'}, a + ' · ' + l.length + ' asignaturas · ' + sum(l, s => s.cred || 0) + ' créditos'), stack([{v:sum(l, s => s.had), color:'var(--accent)', label:a + ' HAD'}, {v:sum(l, s => s.hti), color:'var(--ink3)', label:a + ' HTI'}])); })),
+        h('div', {class:'card'}, h('h3', null, 'Horas por asignatura frente al estándar de 144 h'), h('p', {class:'sub'}, 'Estándar observado: 64 HAD + 80 HTI (3 créditos × 48 h). Cumplen 25 de 39.'),
+          barRows([...S].sort((a, b) => hrs(a) - hrs(b)).map(s => ({label:s.code, sub:short(s.name, 22), value:hrs(s), vtext:hrs(s) + ' h', color:hrs(s) === 144 ? 'var(--accent)' : 'var(--warn)', onClick:() => openSubject(s.id)})), {max:160})));
+    } else if (t.tab === 'rap') {
+      const box = detailBox(), raps = ['RAP3','RAP4','RAP5','RAP6'], comps = Object.entries(countBy(S.flatMap(s => s.comps), x => x)).sort((a, b) => b[1] - a[1]);
+      el = h('div', {class:'grid g2'}, h('div', {class:'card'}, h('h3', null, 'Resultados de aprendizaje del programa'), h('p', {class:'sub'}, 'Solo aparecen RAP3 a RAP6: no hay RAP1 ni RAP2 (ciencias básicas y humanidades no fueron entregadas).'),
+        barRows(raps.map(r => ({label:r, value:S.filter(s => s.rap.includes(r)).length, onClick:() => show(box, r, S.filter(s => s.rap.includes(r)).map(s => s.id))})))),
+        h('div', {class:'card'}, h('h3', null, 'Formación integral (competencias institucionales)'), barRows(comps.map(c => ({label:c[0], value:c[1], onClick:() => show(box, c[0], S.filter(s => s.comps.includes(c[0])).map(s => s.id))})))),
+        h('div', {style:{gridColumn:'1 / -1'}}, box));
+    } else if (t.tab === 'eval') {
+      const bad = D.findings[1].ids, max = 180;
+      el = h('div', {class:'card'}, h('h3', null, 'Suma de porcentajes en la tabla de evaluación'), h('p', {class:'sub'}, bad.length + ' de ' + S.length + ' no suman 100 %. Cada columna es una asignatura; pase el cursor para ver el nombre.'),
+        h('div', {class:'cols', style:{gridTemplateColumns:'repeat(' + S.length + ',1fr)'}}, S.map(s => { const d = h('div', {class:s.evalSum !== 100 ? 'bad' : '', style:{height:(s.evalSum / max * 100) + '%', cursor:'pointer'}, onclick:() => openSubject(s.id)}); return bindTip(d, () => '<b>' + esc(s.code + ' ' + s.name) + '</b><br>suma ' + s.evalSum + '%'); })),
+        h('div', {class:'legend', style:{marginTop:'8px'}}, h('span', null, '■ suma 100 % (azul)'), h('span', null, '■ no suma 100 % (naranja)'), h('span', null, 'eje: 0 a 180 %')),
+        h('p', {class:'sub', style:{marginTop:'8px'}}, 'Requieren normalizarse:'), h('div', {class:'chips'}, bad.map(i => h('button', {class:'chip', type:'button', onclick:() => openSubject(i)}, h('b', null, S[i].code), ' ' + S[i].evalSum + '%'))));
+    } else if (t.tab === 'bib') {
+      const yrs = D.bib.years, bins = [[1950,1999,'≤1999'],[2000,2004,'2000–04'],[2005,2009,'2005–09'],[2010,2014,'2010–14'],[2015,2019,'2015–19'],[2020,2029,'2020+']];
+      el = h('div', {class:'grid g2'}, h('div', {class:'card'}, h('h3', null, 'Año de publicación de las referencias'), h('p', {class:'sub'}, yrs.length + ' referencias con año detectable de ' + D.bib.total + ' · mediana ' + D.bib.median),
+        barRows(bins.map(b => ({label:b[2], value:yrs.filter(y => y >= b[0] && y <= b[1]).length})))),
+        h('div', {class:'card'}, h('h3', null, 'Mediana por área'), barRows(Object.entries(D.bib.byArea).sort((a, b) => a[1].med - b[1].med).map(([k, v]) => ({label:k, value:v.med - 2000, vtext:String(v.med), sub:v.n + ' refs.'})), {max:26}),
+          h('p', {class:'sub'}, 'Las barras parten del año 2000 para hacer visible la diferencia.')));
+    } else {
+      const box = detailBox();
+      el = h('div', {style:{display:'flex',flexDirection:'column',gap:'14px'}}, h('div', {class:'card'}, h('h3', null, 'Herramientas y tecnologías mencionadas'), h('p', {class:'sub'}, 'Detección por palabras clave en todo el texto del microcurrículo: es una pista, no una auditoría.'),
+        barRows(D.tools.filter(x => x.ids.length).sort((a, b) => b.ids.length - a.ids.length).map(x => ({label:x.name, value:x.ids.length, onClick:() => show(box, x.name, x.ids)})))), box);
+    }
+    body.replaceChildren(el);
+  }
+  const seg = h('div', {class:'seg', role:'group', 'aria-label':'Vista'}, tabs.map(o => h('button', {type:'button', 'aria-pressed':String(t.tab === o[0]), onclick:e => { t.tab = o[0]; [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); draw(); }}, o[1])));
+  draw(); return h('section', {class:'slide'}, header('Estructura académica', 'Carga horaria, resultados de aprendizaje, evaluación, bibliografía y herramientas de las 39 asignaturas.'), seg, body);
+}
+
+/* ---------------- 5. Calidad ---------------- */
+function rCalidad() {
+  const fs = D.findings.filter(f => f.ids.length);
+  const total = sum(fs, f => f.ids.length);
+  return h('section', {class:'slide'}, header('Calidad de datos de los microcurrículos', fs.length + ' tipos de hallazgo. Son puntos por depurar antes de modificar los documentos; no juzgan el contenido académico.'),
+    h('div', {class:'grid g2'}, fs.map(f => {
+      const more = h('div', {class:'chips'}, f.ids.slice(0, 8).map(i => sChip(S[i])));
+      const card = h('div', {class:'card', style:{display:'flex',flexDirection:'column',gap:'8px'}}, h('div', {style:{display:'flex',gap:'8px',alignItems:'center',justifyContent:'space-between'}}, h('h3', null, f.k), sev(f.sev)), h('p', {class:'sub'}, f.desc),
+        h('div', null, h('b', {style:{fontSize:'20px'}}, f.ids.length), h('span', {class:'sub'}, ' asignaturas')),
+        f.pairs ? h('ul', {class:'l'}, f.pairs.map(p => h('li', null, S[p[0]].code + ' (' + ord(S[p[0]].sem) + ') exige ' + S[p[1]].code + ' (' + ord(S[p[1]].sem) + ')'))) : more,
+        f.ids.length > 8 && !f.pairs ? h('button', {class:'ghost', type:'button', onclick:e => { more.replaceChildren(...f.ids.map(i => sChip(S[i]))); e.target.remove(); }}, 'Ver las ' + f.ids.length) : null);
+      return card;
+    })));
+}
+
+/* ---------------- 6. Laboratorios ---------------- */
+function rLabs() {
+  const t = st.lab, body = h('div');
+  const cov = ['✘', '◐', '✔'];
+  function draw() {
+    if (t.tab === 'cmp') {
+      body.replaceChildren(h('div', {class:'card'}, h('h3', null, 'Cobertura de la información de cada informe'), h('p', {class:'sub'}, '✔ completo · ◐ parcial · ✘ no aparece. Es lo que falta para comparar los laboratorios en igualdad de condiciones.'),
+        h('div', {class:'tw'}, h('table', {class:'hm'}, h('thead', null, h('tr', null, h('th', {class:'l'}, 'Información'), LID.map(l => h('th', null, labTag(l))))),
+          h('tbody', null, D.cobItems.map((it, i) => h('tr', null, h('td', {class:'l'}, it), LID.map(l => h('td', null, h('span', {class:'cov cov' + LABS[l].cob[i], title:cov[LABS[l].cob[i]]}, cov[LABS[l].cob[i]])))))),
+          h('tfoot', null, h('tr', null, h('td', {class:'l'}, h('b', null, 'Completitud')), LID.map(l => h('td', null, h('b', null, Math.round(sum(LABS[l].cob) / 20 * 100) + '%'))))))),
+        h('div', {class:'tw', style:{marginTop:'14px'}}, h('table', null, h('thead', null, h('tr', null, ['Laboratorio','Fuente','Fecha','Ubicación','Estado actual','Contacto'].map(x => h('th', null, x)))),
+          h('tbody', null, LID.map(l => h('tr', null, h('td', null, labTag(l, true)), h('td', null, LABS[l].fuente), h('td', null, LABS[l].fecha), h('td', null, LABS[l].loc), h('td', null, LABS[l].estado), h('td', null, LABS[l].contacto))))))));
+      return;
+    }
+    const L = LABS[t.tab], id = t.tab;
+    const declared = S.filter(s => s.asg.antes.includes(id)), prim = S.filter(s => s.asg.prim === id), comp = S.filter(s => s.asg.comps.includes(id));
+    const claimIds = L.claims;
+    body.replaceChildren(h('div', {class:'card', style:{'--lc':lc(id)}}, h('div', {class:'band'}), h('h2', null, L.name), h('p', {class:'lead', style:{fontSize:'14px'}}, L.nat),
+      h('div', {class:'sub'}, 'Fuente: ' + L.fuente + ' · ' + L.fecha), h('div', {class:'sub'}, 'Ubicación: ' + L.loc + ' · ' + L.estado), h('div', {class:'sub'}, 'Contacto: ' + L.contacto)),
+      h('div', {class:'grid g4', style:{margin:'14px 0'}}, L.impacto.map(i => h('div', {class:'tile', style:{'--lc':lc(id)}}, h('b', null, i[0]), h('span', null, i[1])))),
+      h('div', {class:'grid g2'}, h('div', {class:'card'}, h('h3', null, 'Recursos'), h('ul', {class:'l'}, L.recursos.map(x => h('li', null, x))), h('h3', {style:{marginTop:'12px'}}, 'Actividades'), h('ul', {class:'l'}, L.actividades.map(x => h('li', null, x)))),
+        h('div', {class:'card'}, h('h3', null, 'Competencias que aporta'), h('ul', {class:'l'}, L.competencias.map(x => h('li', null, x))), h('h3', {style:{marginTop:'12px'}}, 'Requisitos de uso'), h('p', null, L.requisitos), h('h3', {style:{marginTop:'12px'}}, 'Necesidades declaradas'), h('ul', {class:'l'}, L.necesidades.map(x => h('li', null, x))))),
+      h('div', {class:'card', style:{marginTop:'14px'}}, h('h3', null, 'Información disponible en su informe'), h('div', {class:'chips'}, D.cobItems.map((it, i) => h('span', {class:'tag'}, h('span', {class:'cov cov' + L.cob[i], style:{width:'18px',height:'18px',lineHeight:'18px'}}, cov[L.cob[i]]), it)))),
+      h('div', {class:'grid g2', style:{marginTop:'14px'}},
+        h('div', {class:'card'}, h('h3', null, 'El laboratorio declara (' + claimIds.length + (L.claimsExt.length ? ' + ' + L.claimsExt.length + ' fuera de la carpeta' : '') + ')'), claimIds.length ? h('div', {class:'chips'}, claimIds.map(i => { const c = sChip(S[i]); if (S[i].asg.antes.includes(id)) c.append(h('span', {class:'pill p-good'}, '✓ confirmada')); return c; })) : h('p', {class:'muted'}, 'El informe no publica una lista de asignaturas.'),
+          L.claimsExt.length ? h('p', {class:'sub'}, 'Fuera de la carpeta: ' + L.claimsExt.join(' · ')) : null, h('p', {class:'sub'}, 'Confirmadas: ' + claimIds.filter(i => S[i].asg.antes.includes(id)).length + ' de ' + claimIds.length)),
+        h('div', {class:'card'}, h('h3', null, 'El microcurrículo hoy lo nombra (' + declared.length + ')'), declared.length ? chipsOf(declared.map(s => s.id)) : h('p', {class:'muted'}, 'Ninguno.'))),
+      h('div', {class:'grid g2', style:{marginTop:'14px'}},
+        h('div', {class:'card'}, h('h3', null, 'Propuesta: principal (' + prim.length + ')'), chipsOf(prim.map(s => s.id))),
+        h('div', {class:'card'}, h('h3', null, 'Propuesta: complementario (' + comp.length + ')'), comp.length ? chipsOf(comp.map(s => s.id)) : h('p', {class:'muted'}, 'Ninguno.'))),
+      id === 'LOG' ? h('div', {class:'card', style:{marginTop:'14px'}}, h('h3', null, 'Compra PARCE 2026 en trámite (Acta 09 del 16-mar-2026)'), h('div', {class:'tw'}, h('table', null, h('thead', null, h('tr', null, h('th', null, 'Prioridad'), h('th', null, 'Equipo'), h('th', null, 'Uso previsto'), h('th', {class:'n'}, 'Valor (COP)'))),
+        h('tbody', null, D.parce.map((p, i) => h('tr', null, h('td', null, i + 1), h('td', null, p[0]), h('td', null, p[1]), h('td', {class:'n'}, fmt(p[2]))))), h('tfoot', null, h('tr', null, h('td', null), h('td', null, h('b', null, 'Total (IVA incluido)')), h('td', null), h('td', {class:'n'}, h('b', null, fmt(sum(D.parce, p => p[2])))))))), h('p', {class:'sub'}, 'Aprobada y sin entrega a la fecha del informe.')) : null);
+  }
+  const tabs = h('div', {class:'seg', role:'group', 'aria-label':'Laboratorio'}, [...LID, 'cmp'].map(l => h('button', {type:'button', 'aria-pressed':String(t.tab === l), onclick:e => { t.tab = l; [...tabs.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); draw(); }}, l === 'cmp' ? 'Comparar' : LN[l])));
+  draw(); return h('section', {class:'slide'}, header('Los cinco laboratorios', 'Qué es cada uno, con qué cuenta, qué aporta y qué tan completo es su informe. «Comparar» muestra la cobertura de información lado a lado.'), tabs, body);
+}
+
+/* ---------------- 7. Matriz ---------------- */
+function rMatriz() {
+  const m = st.mat, tbody = h('tbody'), info = h('div', {class:'sub'});
+  const A = (s, l) => LABS[l].claims.includes(s.id), B = (s, l) => s.asg.antes.includes(l), P = (s, l) => s.asg.prim === l, C = (s, l) => s.asg.comps.includes(l);
+  function cell(s, l) {
+    const lcs = {'--lc':lc(l), '--on':lon(l)};
+    if (m.mode === 'ahora') { const a = A(s, l), b = B(s, l); return a || b ? h('span', {class:'cell', style:lcs}, (a ? 'A' : '') + (b ? 'B' : '')) : ''; }
+    if (m.mode === 'prop') return P(s, l) ? h('span', {class:'cell', style:lcs}, '●') : C(s, l) ? h('span', {class:'cell out', style:lcs}, '○') : '';
+    const had = A(s, l) || B(s, l), has = P(s, l) || C(s, l);
+    return had && has ? h('span', {class:'cell out', style:lcs}, '=') : has ? h('span', {class:'cell', style:lcs}, '＋') : had ? h('span', {class:'cell minus'}, '−') : '';
+  }
+  function draw() {
+    const q = m.q.toLowerCase();
+    const rows = S.filter(s => (m.estado === 'Todos' || s.asg.estado === m.estado) && (!q || (s.code + ' ' + s.name).toLowerCase().includes(q)));
+    info.textContent = rows.length + ' asignaturas';
+    tbody.replaceChildren(...rows.map(s => {
+      const tr = h('tr', {class:'click', onclick:() => openSubject(s.id)}, h('td', {class:'l'}, ord(s.sem)), h('td', {class:'l'}, h('b', null, s.code)), h('td', {class:'l'}, short(s.name, 38)), LID.map(l => h('td', null, cell(s, l))), h('td', null, estPill(s.asg.estado)));
+      return bindTip(tr, () => '<b>' + esc(s.code + ' ' + s.name) + '</b><br>Principal: ' + LN[s.asg.prim] + ' · ajuste ' + s.asg.fit.toLowerCase() + '<br>' + esc(short(s.asg.why, 170)));
+    }));
+  }
+  const legendText = {ahora:'A = el laboratorio lo declara en su informe · B = el microcurrículo lo nombra · AB = ambos', prop:'● laboratorio principal (con componente evaluativo) · ○ complementario', dif:'＋ vínculo nuevo · = se mantiene · − se declaraba y no aparece en la propuesta'};
+  const leg = h('div', {class:'sub'}, legendText[m.mode]);
+  const seg = h('div', {class:'seg', role:'group', 'aria-label':'Vista'}, [['ahora','Hoy (declarado)'],['prop','Propuesta'],['dif','Diferencias']].map(o => h('button', {type:'button', 'aria-pressed':String(m.mode === o[0]), onclick:e => { m.mode = o[0]; [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); leg.textContent = legendText[m.mode]; draw(); }}, o[1])));
+  const root = h('section', {class:'slide'}, header('Matriz laboratorio × asignatura', 'Cambie de vista para pasar de lo que se declara hoy a la propuesta y ver qué vínculos son nuevos. Haga clic en una fila para abrir la ficha.'),
+    h('div', {class:'tools'}, seg, h('label', {class:'field'}, 'Estado frente a hoy', h('select', {id:'mat-estado', onchange:e => { m.estado = e.target.value; draw(); }}, ['Todos','Coincide','Cambia','Nuevo'].map(o => h('option', {value:o, selected:m.estado === o}, o)))),
+      h('label', {class:'field', style:{flex:'1 1 200px'}}, 'Buscar', h('input', {type:'search', id:'mat-q', value:m.q, placeholder:'código o nombre', oninput:e => { m.q = e.target.value; draw(); }}))), leg, info,
+    h('div', {class:'tw', style:{maxHeight:'70vh'}}, h('table', {class:'hm'}, h('thead', null, h('tr', null, h('th', {class:'l'}, 'Sem.'), h('th', {class:'l'}, 'Código'), h('th', {class:'l'}, 'Asignatura'), LID.map(l => h('th', null, labTag(l))), h('th', null, 'Estado'))), tbody)));
+  draw(); return root;
+}
+
+/* ---------------- 8. Asignación ---------------- */
+function rAsignacion() {
+  const a = st.asg, list = h('div', {style:{display:'flex',flexDirection:'column',gap:'10px'}});
+  const prim = countBy(S, s => s.asg.prim), cam = S.filter(s => s.asg.estado === 'Cambia');
+  function donut() {
+    const R = 42, C = 2 * Math.PI * R, g = svg('svg', {viewBox:'0 0 120 120', width:'160', height:'160', role:'img', 'aria-label':'Reparto del laboratorio principal'});
+    let off = 0;
+    LID.forEach(l => { const v = prim[l] || 0, len = v / S.length * C; const c = svg('circle', {cx:'60', cy:'60', r:String(R), fill:'none', 'stroke-width':'18', stroke:lc(l), 'stroke-dasharray':(len - 1.5) + ' ' + (C - len + 1.5), 'stroke-dashoffset':String(-off), transform:'rotate(-90 60 60)'}); off += len; bindTip(c, () => '<b>' + LABS[l].name + '</b>: ' + v + ' asignaturas'); g.append(c); });
+    const t1 = svg('text', {x:'60', y:'62', 'text-anchor':'middle', 'font-size':'20', 'font-weight':'700', fill:'currentColor'}); t1.textContent = S.length;
+    const t2 = svg('text', {x:'60', y:'76', 'text-anchor':'middle', 'font-size':'8', fill:'currentColor'}); t2.textContent = 'asignaturas';
+    g.append(t1, t2); return g;
+  }
+  function drawList() {
+    const rows = S.filter(s => a.lab === 'Todos' || s.asg.prim === a.lab);
+    list.replaceChildren(...rows.map(s => h('details', {class:'card', style:{'--lc':lc(s.asg.prim), padding:'10px 14px'}},
+      h('summary', {style:{cursor:'pointer',display:'flex',gap:'8px',alignItems:'center',flexWrap:'wrap'}}, h('b', null, ord(s.sem) + ' ' + s.code), s.name, labTag(s.asg.prim), fitPill(s.asg.fit), estPill(s.asg.estado), h('span', {class:'sub'}, s.asg.peso + '% · ' + s.asg.horas + ' h')),
+      h('div', {style:{display:'flex',flexDirection:'column',gap:'6px',paddingTop:'8px'}}, h('p', null, h('b', null, 'Por qué: '), s.asg.why), h('p', null, h('b', null, 'Práctica: '), s.asg.pract), h('p', null, h('b', null, 'Evidencia: '), s.asg.prod),
+        h('p', null, h('b', null, 'Convierte: '), s.asg.conv), h('div', {class:'chips'}, h('span', {class:'sub'}, 'Complementarios:'), s.asg.comps.map(c => labTag(c))), h('div', null, h('button', {class:'ghost', type:'button', onclick:() => openSubject(s.id)}, 'Ficha completa'))))));
+  }
+  const maxSem = 11, semBars = h('div', {style:{display:'grid',gridTemplateColumns:'repeat(11,minmax(0,1fr))',gap:'6px',alignItems:'end',height:'150px'}},
+    Array.from({length:maxSem}, (_, k) => { const n = k + 1, l = k === 10 ? S.filter(s => s.type === 'Electiva') : S.filter(s => s.sem === n);
+      const col = h('div', {style:{display:'flex',flexDirection:'column-reverse',gap:'2px',height:'100%',justifyContent:'flex-start'}}, ...LID.flatMap(id => Array.from({length:l.filter(s => s.asg.prim === id).length}, () => h('i', {style:{display:'block',height:'16px',background:lc(id),borderRadius:'2px'}}))));
+      return h('div', {style:{display:'flex',flexDirection:'column',justifyContent:'flex-end',height:'100%',minWidth:0}}, col, h('div', {class:'sub', style:{textAlign:'center',paddingTop:'4px'}}, k === 10 ? 'E' : n)); }));
+  const legend = h('div', {class:'legend'}, ['Todos', ...LID].map(l => h('button', {type:'button', 'aria-pressed':String(a.lab === l), onclick:e => { a.lab = l; [...legend.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); drawList(); }}, l === 'Todos' ? 'Todos' : [h('span', {class:'dot', style:{'--lc':lc(l)}}), LN[l] + ' · ' + (prim[l] || 0)])));
+  drawList();
+  return h('section', {class:'slide'}, header('Asignación propuesta', 'Un laboratorio principal por asignatura, con componente evaluativo y aprobatorio, más laboratorios complementarios para sesiones puntuales.'),
+    h('div', {class:'grid g2'}, h('div', {class:'card', style:{display:'flex',gap:'16px',alignItems:'center',flexWrap:'wrap'}}, donut(), h('div', {style:{display:'flex',flexDirection:'column',gap:'6px',minWidth:'180px'}}, LID.map(l => h('div', null, labTag(l), ' ', h('b', null, prim[l] || 0), h('span', {class:'sub'}, ' principal · ' + S.filter(s => s.asg.comps.includes(l)).length + ' complementario'))))),
+      h('div', {class:'card'}, h('h3', null, 'Laboratorio principal por semestre'), h('p', {class:'sub'}, 'Cada bloque es una asignatura; «E» son las electivas (7.º–10.º). Insumo para la etapa de espacios y horarios.'), semBars)),
+    h('div', {class:'card'}, h('h3', null, 'Reasignaciones: cambia el laboratorio principal'), h('ul', {class:'l'}, cam.map(s => h('li', null, h('b', null, s.code + ' ' + s.name), ': ', s.asg.antes.map(x => LN[x]).join(', '), ' → ', h('b', null, LN[s.asg.prim]), ' (' + LN[s.asg.antes[0]] + ' queda como complementario)')))),
+    h('div', {class:'tools'}, legend), list);
+}
+
+/* ---------------- 9. Componente evaluativo ---------------- */
+function rEval() {
+  const e = st.ev; if (e.id == null) e.id = S.find(s => s.code === 'II742').id;
+  const out = h('div'), res = h('div');
+  const sel = h('select', {id:'ev-sel', onchange:ev => { e.id = +ev.target.value; e.w = null; draw(); }}, S.map(s => h('option', {value:s.id, selected:s.id === e.id}, s.code + ' · ' + s.name + ' (' + ord(s.sem) + ')')));
+  const slider = h('input', {type:'range', id:'ev-w', min:'0', max:'40', step:'5', oninput:ev => { e.w = +ev.target.value; draw(); }});
+  const inp = (id, v, step, max) => h('input', {type:'number', id, min:'0', max:String(max), step:String(step), value:String(v), oninput:calc});
+  const rub = [['Preparación, inducción y normas', 15], ['Ejecución y registro de la práctica', 30], ['Análisis y resultados', 35], ['Informe, sustentación y equipo', 20]];
+  const sc = rub.map((r, i) => inp('sc' + i, 4, .1, 5)), min = inp('min', 3, .1, 5), rest = inp('rest', 3.8, .1, 5);
+  function draw() {
+    const s = S[e.id]; if (e.w == null) e.w = s.asg.peso; slider.value = String(e.w);
+    const tot = s.evalSum || 1, scale = (100 - e.w) / tot, hours = 2 * Math.round(e.w / 100 * s.had / 2);
+    const bar = (segs) => h('div', {class:'stack', style:{height:'28px'}}, segs.map((x, i) => h('div', {style:{flex:x.v + ' 1 0', '--lc':x.color || 'var(--accent)', '--on':'var(--bg)', opacity:x.color ? '1' : String(1 - (i % 4) * .16)}}, x.v >= 6 ? x.v + '%' : '')));
+    out.replaceChildren(h('div', {class:'grid g2'},
+      h('div', {class:'card'}, h('h3', null, 'Evaluación actual · suma ' + s.evalSum + '%'), bar(s.eval.map(x => ({v:x.p || 0}))), h('ul', {class:'l', style:{marginTop:'8px'}}, s.eval.map(x => h('li', null, h('b', null, x.p + '%'), ' ' + short(x.a, 130)))),
+        s.evalSum !== 100 ? h('span', {class:'pill p-bad'}, '▲ no suma 100 %: normalizar primero') : null),
+      h('div', {class:'card', style:{'--lc':lc(s.asg.prim)}}, h('h3', null, 'Con componente de laboratorio · ' + e.w + '%'), bar([{v:e.w, color:lc(s.asg.prim)}, ...s.eval.map(x => ({v:+((x.p || 0) * scale).toFixed(1)}))]),
+        h('p', {style:{marginTop:'8px'}}, labTag(s.asg.prim, true), ' ', h('b', null, e.w + '%'), ' de la nota · ', h('b', null, hours + ' h'), ' de las ' + s.had + ' HAD (' + Math.round(hours / s.had * 100) + '%)'),
+        h('p', {class:'sub'}, 'Propuesta para esta asignatura: ' + s.asg.peso + '% · ' + s.asg.horas + ' h. Convierte: ' + s.asg.conv), h('p', {class:'sub'}, 'Las demás filas se escalan en proporción solo para ilustrar; el docente define de cuáles se toman los puntos.'))));
+    calc();
+  }
+  function calc() {
+    const w = e.w == null ? 20 : e.w, v = i => Math.max(0, Math.min(5, parseFloat(sc[i].value) || 0));
+    const lab = sum(rub, (r, i) => 0) + rub.reduce((t, r, i) => t + v(i) * r[1] / 100, 0), m = parseFloat(min.value) || 3, rs = Math.max(0, Math.min(5, parseFloat(rest.value) || 0));
+    const fin = lab * w / 100 + rs * (100 - w) / 100, A = lab >= m && fin >= m, Bc = fin >= m;
+    res.replaceChildren(h('div', {class:'grid g3'},
+      h('div', {class:'res'}, h('span', {class:'sub'}, 'Nota del componente de laboratorio'), h('b', null, lab.toFixed(2))),
+      h('div', {class:'res'}, h('span', {class:'sub'}, 'Nota final de la asignatura (peso ' + w + '%)'), h('b', null, fin.toFixed(2))),
+      h('div', {class:'res ' + (A ? 'ok' : 'no')}, h('span', {class:'sub'}, 'Opción A · aprobar el componente es requisito'), h('b', null, A ? '✓ aprueba' : '✕ no aprueba'), h('span', {class:'sub'}, lab < m ? 'El componente está por debajo del mínimo.' : fin < m ? 'La nota final está por debajo del mínimo.' : 'Cumple ambos requisitos.'))),
+      h('div', {class:'res ' + (Bc ? 'ok' : 'no'), style:{marginTop:'10px'}}, h('span', {class:'sub'}, 'Opción B · el componente solo pondera'), h('b', null, Bc ? '✓ aprueba' : '✕ no aprueba'), h('span', {class:'sub'}, A !== Bc ? 'Con la opción A el resultado sería distinto: es la diferencia entre ambas reglas.' : 'Ambas reglas dan el mismo resultado con estos valores.')));
+  }
+  const presets = h('div', {class:'chips'}, [['Resto fuerte, laboratorio débil', [2, 2, 2.5, 3], 4.4], ['Equilibrado', [4, 4, 3.8, 4], 3.8], ['Laboratorio fuerte, resto débil', [4.8, 4.5, 4.5, 4.6], 2.6]].map(p => h('button', {class:'chip', type:'button', onclick:() => { p[1].forEach((x, i) => sc[i].value = x); rest.value = p[2]; calc(); }}, p[0])));
+  const root = h('section', {class:'slide'}, header('Componente evaluativo y aprobatorio', 'Simule cómo cambia la evaluación de una asignatura al incorporar el componente de laboratorio, y compare las dos reglas de aprobación.'),
+    h('div', {class:'tools'}, h('label', {class:'field', style:{flex:'2 1 280px'}}, 'Asignatura', sel), h('label', {class:'field', style:{flex:'1 1 200px'}}, 'Peso del componente de laboratorio', slider)), out,
+    h('div', {class:'card'}, h('h3', null, 'Calculadora de la nota del componente'), h('p', {class:'sub'}, 'Rúbrica estándar: ingrese una nota de 0 a 5 por criterio. El mínimo aprobatorio es ajustable.'),
+      h('div', {class:'grid g4', style:{margin:'10px 0'}}, rub.map((r, i) => h('label', {class:'field'}, r[0] + ' · ' + r[1] + '%', sc[i]))),
+      h('div', {class:'grid g2', style:{margin:'10px 0'}}, h('label', {class:'field'}, 'Nota del resto de la asignatura (0–5)', rest), h('label', {class:'field'}, 'Mínimo aprobatorio (ajustable)', min)), presets, h('div', {style:{marginTop:'12px'}}, res)),
+    h('div', {class:'grid g2'}, h('div', {class:'card'}, h('h3', null, 'Regla aprobatoria (para decisión)'), h('ul', {class:'l'}, h('li', null, h('b', null, 'Opción A (recomendada): '), 'para aprobar la asignatura se debe aprobar el componente de laboratorio. Exige definir cómo se recupera.'), h('li', null, h('b', null, 'Opción B: '), 'el componente solo pondera en la nota final.')), h('p', {class:'sub', style:{marginTop:'8px'}}, 'Verificar contra el reglamento estudiantil y la instancia curricular antes de modificar los microcurrículos.')),
+      h('div', {class:'card'}, h('h3', null, 'Principios'), h('ul', {class:'l'}, h('li', null, 'No suma carga: reemplaza trabajos o proyectos que el microcurrículo ya exige.'), h('li', null, 'Un laboratorio principal con peso entre 15 % y 30 %; los complementarios no tienen peso.'), h('li', null, 'Horas dentro de las HAD existentes, en sesiones de 4 h.'), h('li', null, 'Se actualizan las secciones 8, 9 y 10 del microcurrículo.')))));
+  draw(); return root;
+}
+
+/* ---------------- 10. Cierre ---------------- */
+function rCierre() {
+  const nb = D.findings[1].ids.length;
+  return h('section', {class:'slide'}, header('Estado de los laboratorios y siguientes pasos', 'Lo que reportan los informes y lo que sigue una vez validada la asignación.'),
+    h('div', {class:'grid g2'},
+      h('div', {class:'card'}, h('h3', null, 'Necesidades que declara cada laboratorio'), h('div', {style:{display:'flex',flexDirection:'column',gap:'10px',marginTop:'8px'}}, LID.map(l => h('div', {style:{'--lc':lc(l)}}, labTag(l, true), h('ul', {class:'l', style:{marginTop:'4px'}}, LABS[l].necesidades.map(x => h('li', null, x))))))),
+      h('div', {class:'card'}, h('h3', null, 'Riesgos transversales'), h('div', {style:{display:'flex',flexDirection:'column',gap:'10px',marginTop:'8px'}}, D.risks.map(r => h('div', null, h('div', {style:{display:'flex',gap:'8px',alignItems:'center'}}, h('b', null, r[0]), sev(r[2])), h('div', {class:'sub'}, r[1])))))),
+    h('div', {class:'card'}, h('h3', null, 'Siguientes pasos'), h('ol', {class:'l'},
+      h('li', null, h('b', null, 'Validar la asignación'), ' con los docentes coordinadores y con los responsables de cada laboratorio, empezando por las ' + S.filter(s => s.asg.fit === 'Medio').length + ' asignaciones de ajuste medio.'),
+      h('li', null, h('b', null, 'Normalizar ' + nb + ' tablas de evaluación'), ' que no suman 100 % y corregir los códigos repetidos y las secuencias contradictorias.'),
+      h('li', null, h('b', null, 'Decidir la regla aprobatoria y los pesos'), ' del componente de laboratorio.'),
+      h('li', null, h('b', null, 'Actualizar los microcurrículos'), ' (secciones 8, 9 y 10) con la práctica, la evidencia y el peso.'),
+      h('li', null, h('b', null, 'Asignar ubicaciones, espacios y horarios'), ' de cada laboratorio según la demanda por semestre (siguiente etapa).'))),
+    h('div', {class:'nav2'}, h('button', {type:'button', onclick:() => go('resumen')}, '← Volver al resumen'), h('span')));
+}
+
+/* ---------------- enrutamiento ---------------- */
+const SLIDES = [['resumen','Resumen',rResumen],['programa','Programa',rPrograma],['malla','Malla',rMalla],['estructura','Estructura académica',rEstructura],['calidad','Calidad de datos',rCalidad],['laboratorios','Laboratorios',rLabs],['matriz','Matriz lab × asignatura',rMatriz],['asignacion','Asignación propuesta',rAsignacion],['evaluacion','Componente evaluativo',rEval],['cierre','Siguientes pasos',rCierre]];
+function go(id) { if (location.hash === '#' + id) route(); else location.hash = id; }
+function route() {
+  const id = (location.hash || '#resumen').slice(1), i = Math.max(0, SLIDES.findIndex(s => s[0] === id)), sl = SLIDES[i];
+  $('#rail').replaceChildren(...SLIDES.map((s, k) => h('button', {type:'button', 'aria-current':k === i ? 'page' : null, onclick:() => go(s[0])}, h('small', null, k + 1), s[1])));
+  const view = sl[2]();
+  const nav = h('div', {class:'nav2'}, i > 0 ? h('button', {type:'button', onclick:() => go(SLIDES[i - 1][0])}, '← ' + SLIDES[i - 1][1]) : h('span'), i < SLIDES.length - 1 ? h('button', {type:'button', onclick:() => go(SLIDES[i + 1][0])}, SLIDES[i + 1][1] + ' →') : h('span'));
+  if (!view.querySelector(':scope > .nav2')) view.append(nav);
+  $('#stage').replaceChildren(view); tip.hidden = true; closeDrawer(); window.scrollTo(0, 0);
+}
+addEventListener('hashchange', route);
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDrawer(); return; }
+  if (['INPUT','SELECT','TEXTAREA'].includes((e.target.tagName || '')) || !$('#drawer').hidden) return;
+  const id = (location.hash || '#resumen').slice(1), i = SLIDES.findIndex(s => s[0] === id);
+  if (e.key === 'ArrowRight' && i < SLIDES.length - 1) go(SLIDES[i + 1][0]); if (e.key === 'ArrowLeft' && i > 0) go(SLIDES[i - 1][0]);
+});
+$('#theme').onclick = () => { const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; };
+route();
+</script>
+</body>
+</html>
