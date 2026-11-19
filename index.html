@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cada asignatura, con su laboratorio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Concepto: cuaderno de laboratorio sobre papel punteado. Cabecera azul noche con los 39 puntos de las asignaturas como pieza central;
+   el resto en papel claro, con códigos en monoespaciada como etiquetas de instrumento y los cinco colores de laboratorio como único color fuerte. */
+:root{
+  --bg:#f3f5f9; --grid:#dbe1ec; --surface:#ffffff; --surface2:#edf0f6; --ink:#0f1727; --ink2:#37425a; --ink3:#66728c; --line:#dce2ec;
+  --accent:#14245b; --on-accent:#ffffff; --focus:#2f54e0; --accent-soft:#e4e9f8;
+  --hero:#0a1226; --hero-ink:#f3f6ff; --hero-ink2:#aab6d3; --hero-line:rgba(255,255,255,.14);
+  --good:#0f7a55; --good-soft:#dff3ea; --warn:#b45309; --bad:#bf3320; --bad-soft:#fbe6e2;
+  --c-fin:#009E73; --c-geio:#E69F00; --c-log:#0072B2; --c-mf:#D55E00; --c-con:#CC79A7;
+  --on-fin:#02150f; --on-geio:#1b1200; --on-log:#ffffff; --on-mf:#1c0a00; --on-con:#240c19;
+  --shadow:0 1px 0 rgba(255,255,255,.7) inset,0 10px 28px -14px rgba(15,23,39,.22);
+  --display:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0f1d; --grid:#151d33; --surface:#111a2f; --surface2:#172240; --ink:#eaf0ff; --ink2:#b7c2dc; --ink3:#7e8bab; --line:#222e4a;
+    --accent:#b4c4ff; --on-accent:#0a1226; --focus:#8fa8ff; --accent-soft:#1a2750; --hero:#060b18;
+    --good:#4cc38a; --good-soft:#12342a; --warn:#f0a35a; --bad:#ff8077; --bad-soft:#3b1a19; --c-log:#3da0e0; --on-log:#04121c;
+    --shadow:0 10px 28px -16px rgba(0,0,0,.6); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a0f1d; --grid:#151d33; --surface:#111a2f; --surface2:#172240; --ink:#eaf0ff; --ink2:#b7c2dc; --ink3:#7e8bab; --line:#222e4a;
+  --accent:#b4c4ff; --on-accent:#0a1226; --focus:#8fa8ff; --accent-soft:#1a2750; --hero:#060b18;
+  --good:#4cc38a; --good-soft:#12342a; --warn:#f0a35a; --bad:#ff8077; --bad-soft:#3b1a19; --c-log:#3da0e0; --on-log:#04121c;
+  --shadow:0 10px 28px -16px rgba(0,0,0,.6); color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background-color:var(--bg);background-image:radial-gradient(var(--grid) 1.2px,transparent 1.4px);background-size:24px 24px;color:var(--ink);font:16px/1.6 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 104px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.02em}
+p{margin:0}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:8px}
+.top{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:16px 0 12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;flex:1 1 auto;min-width:0;font:600 15px var(--display)}
+.brand small{display:block;font:400 12px var(--body);color:var(--ink3)}
+.mark{display:grid;grid-template-columns:repeat(3,9px);gap:3px}
+.mark i{width:9px;height:9px;border-radius:50%;background:var(--lc)}
+.ghost{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 13px;color:var(--ink2);text-decoration:none;font-size:14px;font-weight:500}
+.ghost:hover{border-color:var(--ink3);color:var(--ink)}
+.ghost[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.prog{max-width:1080px;margin:0 auto 6px;display:flex;gap:6px;align-items:center}
+.prog button{flex:1 1 0;min-width:30px;height:34px;border:1px solid var(--line);background:var(--surface);border-radius:999px;font:600 12px var(--mono);color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px;transition:flex .35s ease}
+.prog button.done{background:var(--accent-soft);color:var(--ink2);border-color:transparent}
+.prog button[aria-current="step"]{flex:4 1 0;background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+#stage{max-width:1080px;margin:0 auto;outline:none}
+.slide{display:flex;flex-direction:column;gap:24px;padding:28px 0 12px;min-height:56vh;animation:rise .45s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.kicker{display:flex;align-items:center;gap:10px;font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.kicker::before{content:"";width:22px;height:3px;border-radius:2px;background:var(--ink)}
+h1{font-size:clamp(28px,4.4vw,48px);line-height:1.04;font-weight:700;max-width:21ch}
+.lead{font-size:clamp(17px,2vw,21px);color:var(--ink2);max-width:58ch}
+.btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:12px;padding:13px 24px;font-weight:600;font-size:17px;box-shadow:0 8px 20px -10px var(--accent)}
+.btn:hover{filter:brightness(1.12)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);min-width:0}
+.grid{display:grid;gap:16px;min-width:0}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.muted{color:var(--ink3)}
+.big{font:700 clamp(40px,5.2vw,64px)/1.02 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.03em}
+.cap{font-size:17px;color:var(--ink2);line-height:1.45}
+.stat{display:flex;flex-direction:column;gap:12px}
+.mbar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.mbar span{display:block;height:100%;border-radius:4px;background:var(--ink);transition:width .6s ease}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 9px;background:var(--surface);white-space:nowrap}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--lc);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:14px;color:var(--ink2)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);padding:3px;gap:3px}
+.seg button{border:0;background:transparent;padding:10px 18px;color:var(--ink2);font-weight:500;border-radius:9px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:600}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:center;background:var(--hero);color:var(--hero-ink);border-radius:26px;padding:clamp(22px,3.4vw,40px);position:relative;overflow:hidden;
+  background-image:linear-gradient(var(--hero-line) 1px,transparent 1px),linear-gradient(90deg,var(--hero-line) 1px,transparent 1px);background-size:40px 40px;box-shadow:0 30px 60px -30px rgba(6,11,24,.7)}
+.hero .kicker{color:var(--hero-ink2)}.hero .kicker::before{background:var(--hero-ink)}
+.hero h1{font-size:clamp(32px,5vw,56px);max-width:13ch;color:var(--hero-ink)}
+.hero .lead{color:var(--hero-ink2)}
+.hero .tag{background:rgba(255,255,255,.07);border-color:var(--hero-line);color:var(--hero-ink)}
+.hero .btn{background:#fff;color:#0a1226;box-shadow:0 10px 24px -10px rgba(255,255,255,.4)}
+.hero .txt{display:flex;flex-direction:column;gap:20px}
+.cluster{display:grid;grid-template-columns:repeat(9,1fr);gap:clamp(7px,1.2vw,13px)}
+.cd{aspect-ratio:1;border-radius:50%;background:var(--lc);box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 18px -2px var(--lc);animation:pop .6s cubic-bezier(.2,.8,.3,1.3) both;animation-delay:calc(var(--i)*22ms)}
+@keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+.dots{display:flex;flex-wrap:wrap;gap:10px;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.dt{width:30px;height:30px;border-radius:50%;border:2px solid var(--lc,var(--line));background:var(--lc);padding:0;transition:background-color .5s,border-color .5s,transform .15s,box-shadow .5s;box-shadow:0 0 0 4px color-mix(in srgb,var(--lc) 18%,transparent)}
+.dt.off{border-color:var(--ink3);border-style:dashed;background:transparent;box-shadow:none}
+.dt:hover{transform:scale(1.25)}
+.lab{position:relative;display:flex;flex-direction:column;gap:12px;padding-top:24px;overflow:hidden}
+.lab::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:var(--lc)}
+.lab .hd{display:flex;align-items:center;gap:12px}
+.badge{width:46px;height:46px;border-radius:13px;background:var(--lc);color:var(--on);font:600 12px var(--mono);display:grid;place-items:center;flex:none;letter-spacing:.02em}
+.lab h3{font-size:17px;line-height:1.2}
+.lab>p{font-size:14px;line-height:1.5}
+.lab ul{margin:0;padding-left:18px;color:var(--ink2);font-size:14px}
+.lab .num b{font:700 32px var(--display);letter-spacing:-.03em}
+.lab .num{color:var(--ink2);font-size:13px}
+details summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:14px}
+details ul{margin-top:8px;font-size:13px;color:var(--ink2)}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start}
+.bcol{background:var(--surface2);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:7px;border-top:6px solid var(--lc)}
+.bhead{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14px;padding:2px 2px 4px}
+.bhead b{margin-left:auto;font:700 20px var(--display)}
+.pill{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 9px;font-size:13px;line-height:1.3;transition:transform .12s,border-color .12s}
+.pill:hover{border-color:var(--lc);transform:translateY(-1px)}
+.pill.sel{outline:3px solid var(--focus);outline-offset:1px}
+.pill .sm{color:var(--ink3);font:500 11px var(--mono);display:block;margin-bottom:1px}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:stretch}
+.arrow{align-self:center;font-size:26px;color:var(--ink3)}
+.flow .card{display:flex;flex-direction:column;gap:6px}
+.flow h3{font:500 12px var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.meter{display:flex;height:36px;border-radius:10px;overflow:hidden;background:var(--surface2);gap:3px;margin:10px 0}
+.meter>div{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--on-accent);min-width:0}
+.field{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--ink2)}
+.field select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+th{font:500 12px var(--mono);color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
+tbody tr:nth-child(even){background:var(--surface2)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.ok,.no{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 12px;font-weight:700;font-size:14px}
+.ok{color:var(--good);background:var(--good-soft)}.no{color:var(--bad);background:var(--bad-soft)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.sem{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:8px;align-items:start}
+.sem .c{display:flex;flex-direction:column;gap:7px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 4px}
+.sem .c h3{font:500 11px var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+.sem .dt{width:22px;height:22px;box-shadow:none}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:18px;align-items:flex-start;padding-bottom:22px;position:relative}
+.step:not(:last-child)::before{content:"";position:absolute;left:21px;top:46px;bottom:2px;width:2px;background:var(--line)}
+.step .n{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font:600 18px var(--mono)}
+.step h3{font-size:20px;margin-top:2px}
+.step p{color:var(--ink2)}
+.risk{display:flex;flex-direction:column;gap:8px;margin:0;padding-left:20px;color:var(--ink2)}
+.say{position:fixed;left:0;right:0;bottom:66px;margin:0 auto;max-width:1040px;background:var(--hero);color:var(--hero-ink);border-radius:16px;padding:16px 20px;z-index:40;box-shadow:0 18px 50px rgba(0,0,0,.35);font-size:15px;width:calc(100% - 32px);border-left:5px solid var(--c-geio)}
+body.has-say{padding-bottom:340px}
+.say b{display:block;font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--hero-ink2);margin-bottom:6px}
+.say ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:11px max(16px,env(safe-area-inset-right,0px)) calc(11px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:50}
+.nav>div{max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nav button{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 22px;font-weight:600}
+.nav button.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.nav button:disabled{opacity:.35;cursor:default}
+#count{font:500 13px var(--mono);color:var(--ink3);text-align:center}
+#tip{position:fixed;z-index:80;pointer-events:none;background:var(--hero);color:var(--hero-ink);padding:8px 11px;border-radius:10px;font-size:13px;max-width:300px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+@media (max-width:860px){
+  .g3,.g5,.board{grid-template-columns:minmax(0,1fr)}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .cluster{grid-template-columns:repeat(13,1fr)}
+  .flow{grid-template-columns:minmax(0,1fr)}
+  .arrow{transform:rotate(90deg)}
+  .sem{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .say{bottom:74px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark" id="mark" aria-hidden="true"></span><div>Cada asignatura, con su laboratorio<small>Ingeniería Industrial · UTP · FACIEM</small></div></div>
+  <button class="ghost" id="say-btn" type="button" aria-pressed="false">Guion para explicar</button>
+  <a class="ghost" href="presentacion/presentacion_interactiva.html">Análisis detallado</a>
+  <button class="ghost" id="theme" type="button" aria-label="Cambiar tema claro u oscuro">Tema</button>
+</header>
+<nav class="prog" id="prog" aria-label="Pasos"></nav>
+<main id="stage" tabindex="-1"></main>
+<aside class="say" id="say" hidden></aside>
+<div class="nav"><div><button id="prev" type="button">← Anterior</button><span class="muted" id="count"></span><button id="next" class="primary" type="button">Siguiente →</button></div></div>
+<div id="tip" hidden></div>
+<script id="data" type="application/json">{"meta": {"n": 39, "now": 12, "empty8": 11, "claimed": 26, "confirmed": 3}, "subjects": [{"id": 0, "code": "II123", "name": "Introducción a la Ingeniería Industrial", "sem": 1, "type": "Obligatoria", "prim": "GEIO", "comps": ["MF", "CON"], "fit": "Medio", "estado": "Coincide", "why": "Primer contacto con la profesión: las lúdicas de GEIO muestran fábricas, almacenes y cadenas de suministro (las «áreas de la empresa» del curso) y el microcurrículo ya recurre a «la lúdica que ofrecen los laboratorios de FACIEM».", "pract": "Circuito de inmersión: una lúdica GEIO (producción en serie o Beer Game) y una visita guiada al Lab. de Manufactura Flexible para prototipar el producto innovador (CAD e impresión 3D).", "prod": "Informe breve de la lúdica y prototipo del producto innovador presentado.", "peso": 15, "horas": 10, "conv": "Desarrollo del prototipo del producto innovador.", "antes": ["GEIO"], "generic": true, "lab8": "Desarrollo del prototipo del producto innovador.", "had": 64, "mod": ""}, {"id": 1, "code": "II152", "name": "Informática I", "sem": 1, "type": "Obligatoria", "prim": "FIN", "comps": ["LOG"], "fit": "Medio", "estado": "Nuevo", "why": "Excel, macros y bases de datos aplicadas: el laboratorio lista la asignatura (prácticas con datos reales) y su equipo incluye a la coordinadora del curso.", "pract": "Taller de Excel/Access con series de mercado e indicadores bancarios reales; ejercicio de base de datos con inventario del Lab. de Logística.", "prod": "Libro de Excel con macros y base de datos funcional.", "peso": 15, "horas": 10, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 2, "code": "II212", "name": "Informática T2", "sem": 2, "type": "Obligatoria", "prim": "FIN", "comps": ["LOG"], "fit": "Alto", "estado": "Nuevo", "why": "R, tidyverse, limpieza y exploración de datos: encaja con las guías de descarga de indicadores y estados financieros del sector bancario y la búsqueda con IA; el laboratorio la lista.", "pract": "Pipeline en R: descarga, limpieza y análisis de indicadores del sector bancario.", "prod": "Script reproducible y reporte de análisis.", "peso": 20, "horas": 10, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 48, "mod": ""}, {"id": 3, "code": "II243", "name": "Contabilidad de Empresas", "sem": 2, "type": "Obligatoria", "prim": "FIN", "comps": ["CON"], "fit": "Medio", "estado": "Nuevo", "why": "Estados financieros, impuestos y nómina; el laboratorio ofrece prácticas con datos reales y guías de análisis financiero, y el microcurrículo ya pide contabilizar una empresa real.", "pract": "Práctica de lectura de estados financieros reales (sector bancario/empresas inscritas en bvc) con las guías del laboratorio.", "prod": "Taller de lectura de estados y contabilización de transacciones de una empresa real.", "peso": 15, "horas": 10, "conv": "Trabajo de aplicación de los conceptos en una empresa real.", "antes": [], "generic": false, "lab8": "Trabajo de aplicación de los conceptos vistos en una empresa real.", "had": 64, "mod": ""}, {"id": 4, "code": "II321", "name": "Sicología Organizacional", "sem": 3, "type": "Obligatoria", "prim": "CON", "comps": ["GEIO"], "fit": "Medio", "estado": "Nuevo", "why": "Trabaja clima y cultura organizacional, grupos, liderazgo y bienestar; el Consultorio ofrece ciclos sobre inteligencia emocional y salud mental organizacional y declara la cultura organizacional como área de conocimiento.", "pract": "Participación en un ciclo de capacitación del Consultorio y aplicación del instrumento de clima a un caso/organización asignada, con acompañamiento docente.", "prod": "Informe de medición de clima y reflexión sobre la lúdica de grupo.", "peso": 15, "horas": 8, "conv": "Medición de clima o cultura organizacional.", "antes": [], "generic": false, "lab8": "Medición de clima o cultura organizacional.", "had": 48, "mod": "Formativa"}, {"id": 5, "code": "II3B3", "name": "Administración", "sem": 3, "type": "Obligatoria", "prim": "CON", "comps": ["GEIO"], "fit": "Medio", "estado": "Nuevo", "why": "El entregable «propuesta de creación de empresa» coincide con los talleres de modelo de negocio (Canvas) y formalización del Consultorio. Se imparte antes del 5.º semestre: participa en modalidad de taller, no de asesoría.", "pract": "Dos talleres del Consultorio (Canvas y formalización) aplicados al plan de empresa del grupo, con retroalimentación de los asesores.", "prod": "Canvas y propuesta de creación de empresa validados.", "peso": 15, "horas": 10, "conv": "Propuesta de creación de empresa.", "antes": [], "generic": false, "lab8": "Propuesta de Creación de empresa.", "had": 64, "mod": "Formativa"}, {"id": 6, "code": "II3C3", "name": "Economía", "sem": 3, "type": "Obligatoria", "prim": "FIN", "comps": [], "fit": "Medio", "estado": "Nuevo", "why": "Mercados, consumo, equilibrio y agregados macro: las pantallas e-bvc y Bolsa Millonaria permiten observar la formación de precios y la reacción a indicadores macroeconómicos.", "pract": "Seguimiento del mercado con e-bvc/Bolsa Millonaria durante el semestre y análisis de un agregado macroeconómico.", "prod": "Bitácora de seguimiento y ensayo de análisis de mercado.", "peso": 15, "horas": 10, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 7, "code": "II4A3", "name": "Sistema de Costeo", "sem": 4, "type": "Obligatoria", "prim": "FIN", "comps": ["GEIO", "CON"], "fit": "Alto", "estado": "Coincide", "why": "Ya declara Laboratorio Financiero («lúdica mesa de dinero») y GEIO; el costeo por órdenes, procesos y ABC se practica con casos reales.", "pract": "Formalizar: mesa de dinero + costeo por órdenes/ABC con lúdica GEIO; costos de una empresa acompañada por el Consultorio.", "prod": "Proyecto de aula con costeo completo y sustentación.", "peso": 20, "horas": 12, "conv": "Laboratorio Financiero, proyecto de aula, Laboratorio GEIO.", "antes": ["FIN", "GEIO"], "generic": false, "lab8": "Laboratorio Financiero, Proyecto de aula, Laboratorio GEIO.", "had": 64, "mod": ""}, {"id": 8, "code": "II4B3", "name": "Administración de Personal", "sem": 4, "type": "Obligatoria", "prim": "CON", "comps": ["GEIO"], "fit": "Alto", "estado": "Nuevo", "why": "Diseño de cargos, selección, evaluación de desempeño y tendencias de gestión humana: el Consultorio atiende talento humano en Mipymes. Por estar en 4.º semestre opera en modalidad formativa.", "pract": "Propuesta de gestión humana (cargos, selección, evaluación) para una Mipyme del Consultorio, en modalidad observación-diagnóstico.", "prod": "Propuesta moderna de gestión humana entregada y socializada.", "peso": 20, "horas": 14, "conv": "Propuesta moderna de gestión humana para una empresa.", "antes": [], "generic": false, "lab8": "Propuesta moderna de gestión humana para una empresa", "had": 68, "mod": "Formativa"}, {"id": 9, "code": "II4D3", "name": "Estadística I", "sem": 4, "type": "Obligatoria", "prim": "FIN", "comps": ["GEIO"], "fit": "Medio", "estado": "Nuevo", "why": "Descriptiva, probabilidad y distribuciones: el laboratorio declara «toma de decisiones estadísticas con datos financieros» y GEIO aporta lúdicas de variabilidad (ya usadas en el curso).", "pract": "Análisis descriptivo y de probabilidad de retornos de acciones + lúdica GEIO de variabilidad.", "prod": "Informe de aplicación a un problema de Ingeniería Industrial.", "peso": 15, "horas": 8, "conv": "Aplicación de estimación y pruebas de hipótesis a un problema de II.", "antes": [], "generic": false, "lab8": "Aplicación de los conceptos de estimación puntual por intervalos y pruebas de hipótesis en un problema de Ingeniería Industrial", "had": 60, "mod": ""}, {"id": 10, "code": "II5A3", "name": "Estadística II", "sem": 5, "type": "Obligatoria", "prim": "GEIO", "comps": ["FIN"], "fit": "Medio", "estado": "Nuevo", "why": "Inferencia (intervalos, pruebas de hipótesis): las lúdicas de GEIO generan datos (producción en serie, colas) que se pueden contrastar; FIN aporta datos reales.", "pract": "Experimento con lúdica: muestrear, estimar y probar hipótesis (paramétricas y no paramétricas) y contrastar con datos de mercado.", "prod": "Informe estadístico del experimento.", "peso": 15, "horas": 8, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 60, "mod": ""}, {"id": 11, "code": "II6A2", "name": "Estadística III", "sem": 6, "type": "Obligatoria", "prim": "FIN", "comps": ["LOG"], "fit": "Medio", "estado": "Nuevo", "why": "Muestreo y regresión: series financieras y de indicadores (con el grupo DEA) y análisis de datos logísticos.", "pract": "Modelo de regresión múltiple sobre series de mercado y plan de muestreo de inventario.", "prod": "Modelo validado e informe.", "peso": 15, "horas": 6, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 42, "mod": ""}, {"id": 12, "code": "II6A3", "name": "Análisis Financiero", "sem": 6, "type": "Obligatoria", "prim": "FIN", "comps": ["CON"], "fit": "Alto", "estado": "Nuevo", "why": "El laboratorio lo lista (guía de análisis financiero, prácticas con datos reales) y es su objetivo central; Conexión Empresarial incluye «Planeación Financiera».", "pract": "Diagnóstico financiero con indicadores, usando guías del laboratorio y datos de una empresa, con devolución a una empresa del Consultorio.", "prod": "Diagnóstico financiero final y exposición.", "peso": 25, "horas": 16, "conv": "Aplicar todo lo visto a estados financieros de una empresa real.", "antes": [], "generic": false, "lab8": "A partir de estados financieros de cualquier empresa real aplicar todo lo visto en la asignatura.", "had": 64, "mod": ""}, {"id": 13, "code": "II6C3", "name": "Administración de salarios", "sem": 6, "type": "Obligatoria", "prim": "CON", "comps": ["FIN"], "fit": "Alto", "estado": "Nuevo", "why": "El entregable es una estructura salarial para una empresa; el Consultorio opera con organizaciones reales y el estudiante ya cursa 6.º semestre. FIN aporta el presupuesto y costos salariales.", "pract": "Diseñar la estructura salarial (escalas, curva, incentivos, costo) de una organización atendida, con actas de inicio y cierre.", "prod": "Estructura salarial y acta de cierre.", "peso": 25, "horas": 16, "conv": "Diseño de nueva estructura de salarios para una empresa.", "antes": [], "generic": false, "lab8": "Diseño de nueva estructura de salarios para una empresa.", "had": 64, "mod": ""}, {"id": 14, "code": "II713", "name": "Procesos Estocásticos", "sem": 7, "type": "Obligatoria", "prim": "GEIO", "comps": ["LOG"], "fit": "Alto", "estado": "Nuevo", "why": "Cadenas de Markov y teoría de colas: GEIO trabaja modelos de colas y simulación; el autoservicio de Logística da colas reales.", "pract": "Lúdica de colas y Markov + medición de colas reales en el área de autoservicio del Lab. de Logística.", "prod": "Modelo de colas validado con datos propios.", "peso": 20, "horas": 12, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 15, "code": "II742", "name": "Ingeniería de Métodos", "sem": 7, "type": "Obligatoria", "prim": "MF", "comps": ["LOG", "GEIO"], "fit": "Alto", "estado": "Cambia", "why": "Estudio de tiempos y movimientos, ergonomía y diseño de puestos: MF lo lista (realidad virtual para puestos de trabajo) y el microcurrículo ya usa «tecnologías de realidad virtual (laboratorio)» y Ergonautas.", "pract": "Diseño y evaluación de un puesto en VR (REBA/RULA) y estudio de tiempos en la celda de ensamble; réplica del estudio en picking (LOG).", "prod": "Informe de observación y rediseño del puesto.", "peso": 25, "horas": 16, "conv": "Diseño de puesto de trabajo y prácticas de laboratorio (movimientos, ensamble).", "antes": ["GEIO"], "generic": false, "lab8": "- Practica de laboratorio en el aula. - Informe escrito sobre descripción de procesos. - Practica de laboratorio de ensamble en el aula. - Diseño de puesto de trabajo.", "had": 64, "mod": ""}, {"id": 16, "code": "II7A3", "name": "Mercados I", "sem": 7, "type": "Obligatoria", "prim": "CON", "comps": [], "fit": "Alto", "estado": "Nuevo", "why": "Ya trabaja sobre empresa real (servucción, marketing mix) y el Consultorio reporta Conexión Empresarial con esta asignatura.", "pract": "Formalizar Conexión Empresarial: proyecto de marketing mix y servucción en una empresa acompañada, con actas.", "prod": "Informe y sustentación ante la empresa.", "peso": 25, "horas": 16, "conv": "Trabajo especializado de servucción en empresa real y marketing mix (4P).", "antes": [], "generic": false, "lab8": "Trabajo Especializado de Servucción en Empresa Real. Trabajo de Marketing Mix (4P's).", "had": 64, "mod": ""}, {"id": 17, "code": "II7D3", "name": "Investigación de Operaciones I", "sem": 7, "type": "Obligatoria", "prim": "GEIO", "comps": ["FIN"], "fit": "Alto", "estado": "Coincide", "why": "Ya usa una lúdica GEIO para introducir programación lineal; GEIO tiene solvers y metodologías de modelado.", "pract": "Formalizar: lúdica de modelado + proyecto de modelo de PL resuelto con solver.", "prod": "Modelo matemático construido y socializado.", "peso": 20, "horas": 12, "conv": "(sección 8 vacía; lúdica GEIO declarada en el contenido)", "antes": ["GEIO"], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 18, "code": "II863", "name": "Simulación", "sem": 8, "type": "Obligatoria", "prim": "GEIO", "comps": ["MF", "LOG"], "fit": "Alto", "estado": "Nuevo", "why": "Simulación de eventos discretos (ProModel/FlexSim) con 13 prácticas de laboratorio; GEIO integra lúdicas y simulación, MF usa FlexSim y LOG simula procesos logísticos.", "pract": "Formalizar las 13 prácticas como componente de laboratorio y validar un modelo contra una lúdica o una celda real.", "prod": "Modelo de simulación del caso real y validación.", "peso": 25, "horas": 16, "conv": "Prácticas 1–13 de «Laboratorios de Simulación Discreta» y caso real (ya en el contenido; sección 8 vacía).", "antes": [], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 19, "code": "II883", "name": "Salud Ocupacional", "sem": 8, "type": "Obligatoria", "prim": "LOG", "comps": ["MF", "GEIO"], "fit": "Medio", "estado": "Cambia", "why": "Riesgos, diagnóstico de condiciones y desastres: el Lab. de Logística propone entrenamiento en seguridad de almacenes con realidad virtual; MF aporta VR y ergonomía de estaciones.", "pract": "Identificación de peligros en un almacén virtual (con capacitación previa) y diagnóstico de condiciones de trabajo de un puesto.", "prod": "Matriz de peligros y plan de control.", "peso": 20, "horas": 12, "conv": "Prácticas en el laboratorio GEIO.", "antes": ["GEIO"], "generic": false, "lab8": "Prácticas en el laboratorio GEIO.", "had": 64, "mod": ""}, {"id": 20, "code": "II8A3", "name": "Producción I", "sem": 8, "type": "Obligatoria", "prim": "MF", "comps": ["GEIO"], "fit": "Alto", "estado": "Coincide", "why": "Programación, secuenciación y balanceo de líneas de ensamble: el Lab. de Manufactura Flexible lo lista con esos temas y el microcurrículo ya declara MF y GEIO.", "pract": "Balanceo de línea y scheduling en la celda de ensamble + simulación en FlexSim; lúdica GEIO de programación.", "prod": "Informe de balanceo/programación con simulación.", "peso": 25, "horas": 16, "conv": "Prácticas en el Laboratorio GEIO y en el de Manufactura Flexible.", "antes": ["GEIO", "MF"], "generic": false, "lab8": "Prácticas en el Laboratorio GEIO y Laboratorio de Manufactura Flexible.", "had": 64, "mod": ""}, {"id": 21, "code": "II8B3", "name": "Investigación de Operaciones II", "sem": 8, "type": "Obligatoria", "prim": "GEIO", "comps": ["LOG", "FIN"], "fit": "Alto", "estado": "Nuevo", "why": "Programación entera, heurísticas, redes y TSP: GEIO integra heurísticas y solvers (Gurobi/CPLEX/PuLP); Logística aporta casos de rutas y ubicación.", "pract": "Reto de optimización: diseñar una heurística y compararla con la solución exacta sobre un caso logístico.", "prod": "Informe comparativo heurística vs. exacto.", "peso": 20, "horas": 12, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 22, "code": "II8C3", "name": "Ingeniería Económica", "sem": 8, "type": "Obligatoria", "prim": "FIN", "comps": [], "fit": "Alto", "estado": "Nuevo", "why": "Valor del dinero en el tiempo y evaluación de alternativas; el laboratorio lista la asignatura y el mercado de capitales aporta tasas y datos para decisiones de inversión.", "pract": "Evaluación de alternativas de inversión con datos de mercado (tasas, renta fija) provistos por el laboratorio.", "prod": "Caso de decisión de inversión sustentado.", "peso": 20, "horas": 8, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 40, "mod": ""}, {"id": 23, "code": "II8D3", "name": "Mercados II", "sem": 8, "type": "Obligatoria", "prim": "CON", "comps": [], "fit": "Alto", "estado": "Nuevo", "why": "Investigación de mercados y medición de demanda aplicada a organizaciones reales; Conexión Empresarial ya incluye esta asignatura.", "pract": "Investigación de mercados para una organización del Consultorio: diseño de encuesta, medición de demanda y devolución de hallazgos.", "prod": "Informe de investigación y presentación de resultados a la empresa.", "peso": 25, "horas": 16, "conv": "Investigación de mercados.", "antes": [], "generic": false, "lab8": "Investigación de mercados", "had": 64, "mod": ""}, {"id": 24, "code": "II923", "name": "Formulación y Evaluación de Proyectos", "sem": 9, "type": "Obligatoria", "prim": "CON", "comps": ["FIN"], "fit": "Alto", "estado": "Nuevo", "why": "Formular y evaluar proyectos de inversión; el Consultorio propone vincular formulación de proyectos y atiende modelos de negocio. FIN apoya la evaluación financiera.", "pract": "Formular el proyecto de un emprendimiento del Consultorio (mercado, técnico, financiero).", "prod": "Proyecto formulado y evaluado.", "peso": 25, "horas": 16, "conv": "(sección 8 vacía)", "antes": [], "generic": false, "lab8": "", "had": 64, "mod": ""}, {"id": 25, "code": "II9B2", "name": "Diseño de Plantas", "sem": 9, "type": "Obligatoria", "prim": "MF", "comps": ["LOG", "CON"], "fit": "Alto", "estado": "Nuevo", "why": "Distribución de plantas, flujo de materiales y celdas: MF permite recorrer alternativas de layout en VR; LOG aporta la distribución de almacenes; el proyecto final es sobre empresa real.", "pract": "Layout evaluado en VR (SolidWorks → Unreal) y distribución de un almacén en LOG; proyecto final opcionalmente con una empresa del Consultorio.", "prod": "Proyecto de diseño de planta con evaluación en VR.", "peso": 25, "horas": 16, "conv": "Proyecto final de diseño de plantas aplicado a una empresa real.", "antes": [], "generic": false, "lab8": "- Elaboración de un proyecto final de diseño de plantas aplicado a una empresa real.", "had": 64, "mod": ""}, {"id": 26, "code": "II9C3", "name": "Producción II", "sem": 9, "type": "Obligatoria", "prim": "LOG", "comps": ["GEIO", "MF"], "fit": "Medio", "estado": "Cambia", "why": "Planeación de demanda, MRP y clasificación y modelos de inventario: Logística lo lista (inventarios, trazabilidad, WMS); GEIO aporta lúdicas de planeación y MF la planeación MRP/Kanban.", "pract": "Control de inventarios con códigos de barras/RFID (conteo cíclico, ABC) + lúdica GEIO de efecto látigo + MRP/Kanban en la celda.", "prod": "Informe de control de inventario y plan de requerimientos.", "peso": 20, "horas": 12, "conv": "Prácticas en el laboratorio GEIO.", "antes": ["GEIO"], "generic": false, "lab8": "Prácticas en el laboratorio GEIO.", "had": 64, "mod": ""}, {"id": 27, "code": "II0D3", "name": "Producción III", "sem": 10, "type": "Obligatoria", "prim": "MF", "comps": ["GEIO"], "fit": "Alto", "estado": "Cambia", "why": "Su contenido es manufactura flexible: FMS, tecnología de grupos, celdas y ensamble flexible, que es exactamente la celda del Lab. de Manufactura Flexible.", "pract": "Diseño y simulación de una celda/FMS, programación de un robot en RobotStudio y lúdica GEIO de celdas y TOC.", "prod": "Diseño de celda flexible simulado y validado.", "peso": 25, "horas": 16, "conv": "Prácticas en el laboratorio GEIO.", "antes": ["GEIO"], "generic": false, "lab8": "Prácticas en el laboratorio GEIO.", "had": 64, "mod": ""}, {"id": 28, "code": "II0F3", "name": "Control Total de la Calidad", "sem": 10, "type": "Obligatoria", "prim": "MF", "comps": ["LOG", "GEIO"], "fit": "Medio", "estado": "Nuevo", "why": "Control estadístico y mejoramiento: la visión artificial Cognex permite inspección automatizada; Logística aporta trazabilidad de lotes; GEIO lúdicas de calidad.", "pract": "Inspección automatizada con visión artificial + gráficos de control; trazabilidad de un lote en LOG.", "prod": "Informe de capacidad de proceso y trazabilidad.", "peso": 20, "horas": 12, "conv": "Informes de lecturas especializadas y análisis de casos.", "antes": [], "generic": false, "lab8": "- Presentación de informes de lecturas especializada y tema propuesto. - Análisis y solución de casos.", "had": 64, "mod": ""}, {"id": 29, "code": "II8D3", "name": "Gestión Administrativa y Desarrollo Organizacional", "sem": null, "type": "Electiva", "prim": "CON", "comps": [], "fit": "Alto", "estado": "Nuevo", "why": "Planeación estratégica, direccionamiento, diseño organizacional y desarrollo organizacional: son servicios centrales del Consultorio.", "pract": "Propuesta de estructura administrativa y direccionamiento estratégico de una organización del Consultorio.", "prod": "Propuesta de estructura y plan estratégico.", "peso": 25, "horas": 16, "conv": "Propuesta de estructura administrativa de la empresa.", "antes": [], "generic": false, "lab8": "Propuesta de Estructura Administrativa de la Empresa", "had": 64, "mod": ""}, {"id": 30, "code": "II923", "name": "Optimización Financiera", "sem": null, "type": "Electiva", "prim": "FIN", "comps": ["GEIO"], "fit": "Alto", "estado": "Coincide", "why": "Optimización de portafolios y mercados financieros: ya cita fuentes del laboratorio (Refinitiv, PRECIA, bvc); GEIO aporta solvers.", "pract": "Optimización de portafolio con fuentes del laboratorio, validación en Bolsa Millonaria y solvers GEIO.", "prod": "Caso de optimización con datos reales.", "peso": 25, "horas": 16, "conv": "Caso real o académico con bases de datos y fuentes del Laboratorio Financiero.", "antes": ["FIN"], "generic": false, "lab8": "aplicar lo visto en la asignatura en un caso real o académico con información de las bases de datos suscritas de la Facultad de Ciencias Empresariales, mercado financiero, fuentes Laboratorio Financiero como Refinitiv, PRECIA, bvc y fuentes corporativas.", "had": 64, "mod": ""}, {"id": 31, "code": "IIA03", "name": "Comercio Internacional", "sem": null, "type": "Electiva", "prim": "CON", "comps": ["LOG"], "fit": "Medio", "estado": "Nuevo", "why": "Estrategias de entrada a mercados externos y propuesta de mercadeo internacional para una empresa: es trabajo con organizaciones reales; Logística aporta Incoterms, fletes y cubicaje.", "pract": "Propuesta de mercadeo internacional para una Mipyme del Consultorio + cálculo de fletes/cubicaje en LOG.", "prod": "Propuesta de mercadeo internacional sustentada.", "peso": 25, "horas": 16, "conv": "Propuesta de mercadeo internacional para la empresa.", "antes": [], "generic": false, "lab8": "Propuesta de mercadeo internacional para la empresa", "had": 64, "mod": ""}, {"id": 32, "code": "IIE07", "name": "Automatización y Robótica Industrial", "sem": null, "type": "Electiva", "prim": "MF", "comps": [], "fit": "Alto", "estado": "Coincide", "why": "Automatización y robótica: ABB IRB 120, Mitsubishi RV-2AJ, PLC Siemens y Fischertechnik; ya declara el laboratorio.", "pract": "Formalizar el proyecto y las prácticas con robots, PLC y Fischertechnik (celda robótica).", "prod": "Proyecto de celda automatizada funcionando.", "peso": 30, "horas": 20, "conv": "Proyecto y prácticas con robots industriales y Fischertechnik.", "antes": ["MF"], "generic": false, "lab8": "Proyecto y Practicas con robots industriales, Proyecto y Practicas equipos Fischertechnik. Laboratorio de Manufactura Flexible.", "had": 64, "mod": ""}, {"id": 33, "code": "IIO08", "name": "Ecosistemas y Organización", "sem": null, "type": "Electiva", "prim": "GEIO", "comps": ["CON"], "fit": "Medio", "estado": "Coincide", "why": "Sistemas complejos, arquetipos sistémicos y resiliencia: GEIO trabaja dinámicas de sistemas; ya declara «taller con grupo GEIO» y visita técnica.", "pract": "Taller GEIO de sistemas complejos y visita técnica/diagnóstico socio-ambiental de una Mipyme con el Consultorio.", "prod": "Estudio de caso final con informe de visita.", "peso": 20, "horas": 12, "conv": "Taller con grupo GEIO, estudio de caso y visita técnica.", "antes": ["GEIO"], "generic": false, "lab8": "Taller con grupo GEIO. Estudio de caso. Visita técnica.", "had": 64, "mod": ""}, {"id": 34, "code": "IIP01", "name": "Logística", "sem": null, "type": "Electiva", "prim": "LOG", "comps": ["GEIO"], "fit": "Alto", "estado": "Coincide", "why": "Cadena de suministro, almacenamiento, transporte: es el núcleo del Lab. de Logística y ya declara LOG y GEIO.", "pract": "Formalizar prácticas de inventarios, picking, RFID/WMS, lúdica de cadena (Beer Game) y proyecto final.", "prod": "Proyecto final logístico con prácticas documentadas.", "peso": 30, "horas": 20, "conv": "Laboratorio GEIO, Laboratorio de Logística y proyecto final.", "antes": ["GEIO", "LOG"], "generic": false, "lab8": "Laboratorio GEIO, Laboratorio de logística, Proyecto final de la asignatura.", "had": 64, "mod": ""}, {"id": 35, "code": "IIP01", "name": "Product Design", "sem": null, "type": "Electiva", "prim": "MF", "comps": ["GEIO"], "fit": "Alto", "estado": "Nuevo", "why": "Diseño de producto y prototipado: SolidWorks, impresión 3D y CNC del Lab. de Manufactura Flexible; GEIO aporta Design Thinking.", "pract": "Prototipo físico: modelado en SolidWorks e impresión 3D/CNC; sesión de Design Thinking.", "prod": "Prototipo y dossier de diseño.", "peso": 30, "horas": 20, "conv": "Elaboración de prototipos de producto con diversos materiales.", "antes": [], "generic": false, "lab8": "Elaboración de prototipos de producto utilizando diversos materiales.", "had": 66, "mod": ""}, {"id": 36, "code": "IIP02", "name": "Six Sigma", "sem": null, "type": "Electiva", "prim": "GEIO", "comps": ["CON", "MF"], "fit": "Medio", "estado": "Nuevo", "why": "El portafolio de GEIO incluye capacitación en Six Sigma y lúdicas de variabilidad; el proyecto DMAIC puede aplicarse a una organización del Consultorio.", "pract": "Proyecto DMAIC sobre un caso de lúdica (medición de variabilidad) y, si es posible, sobre una organización acompañada.", "prod": "Proyecto DMAIC documentado.", "peso": 25, "horas": 16, "conv": "Proyecto de aplicación de DMAIC a un caso propuesto.", "antes": [], "generic": false, "lab8": "Elaboración de un proyecto de aplicación de la metodología DMAIC a un caso propuesto.", "had": 64, "mod": ""}, {"id": 37, "code": "IIP03", "name": "Lean Manufacturing", "sem": null, "type": "Electiva", "prim": "GEIO", "comps": ["MF"], "fit": "Alto", "estado": "Coincide", "why": "Lean con lúdicas (Kanban, flujo, 5S): ya declara «lúdicas y prácticas en el Laboratorio GEIO»; MF permite balanceo y Kanban en celda.", "pract": "Lúdicas Lean + balanceo y Kanban en la celda de ensamble.", "prod": "Informe de mejora Lean con indicadores.", "peso": 25, "horas": 16, "conv": "Desarrollo de lúdicas y prácticas en el Laboratorio GEIO.", "antes": ["GEIO"], "generic": false, "lab8": "Desarrollo de lúdicas y prácticas en el Laboratorio GEIO", "had": 64, "mod": ""}, {"id": 38, "code": "UV093", "name": "Gestión Tecnológica", "sem": null, "type": "Electiva", "prim": "LOG", "comps": ["MF", "FIN"], "fit": "Medio", "estado": "Nuevo", "why": "Tecnologías emergentes 4.0 e innovación: Logística propone la asignatura de gestión tecnológica para RFID, NFC y VR/AR; MF aporta Industria 4.0 y FIN la búsqueda con IA en bases especializadas (vigilancia tecnológica).", "pract": "Vigilancia tecnológica de una tecnología 4.0 con demostración en LOG y búsqueda en bases especializadas.", "prod": "Informe de vigilancia tecnológica y demostración.", "peso": 20, "horas": 10, "conv": "Uso de herramientas digitales y plataformas tecnológicas.", "antes": [], "generic": false, "lab8": "Uso de las herramientas digitales y de plataformas tecnológicas.", "had": 48, "mod": ""}], "labs": {"FIN": {"name": "Laboratorio Financiero", "short": "Financiero", "que": "Finanzas aplicadas: mercado de valores, datos financieros reales y concursos de inversión.", "sirve": ["Analizar mercados y datos", "Costos e inversión", "Estadística con datos reales"]}, "GEIO": {"name": "Laboratorio GEIO", "short": "GEIO", "que": "Aprender operaciones jugando y simulando: lúdicas, optimización y colas.", "sirve": ["Vivir procesos con dinámicas", "Modelar y optimizar", "Simular sistemas"]}, "LOG": {"name": "Laboratorio de Logística", "short": "Logística", "que": "Almacén y cadena de suministro con códigos de barras, RFID y realidad virtual.", "sirve": ["Inventarios y trazabilidad", "Picking y almacenes", "Tecnologías 4.0"]}, "MF": {"name": "Laboratorio de Manufactura Flexible", "short": "Manufactura Flexible", "que": "La fábrica del futuro: robots, CNC, impresión 3D, PLC y realidad virtual.", "sirve": ["Automatización y robótica", "Diseño de plantas y puestos", "Prototipos y simulación"]}, "CON": {"name": "Consultorio Empresarial", "short": "Consultorio", "que": "Asesoría real a empresas de la región con estudiantes supervisados.", "sirve": ["Diagnóstico y estrategia", "Mercadeo y talento humano", "Proyectos con empresas reales"]}}, "labIds": ["FIN", "GEIO", "LOG", "MF", "CON"]}</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const S = D.subjects, LB = D.labs, LID = D.labIds, M = D.meta;
+const $ = (q, el=document) => el.querySelector(q);
+const lc = id => 'var(--c-' + id.toLowerCase() + ')';
+const NOW = s => s.antes.length > 0 && !s.generic;
+const semLbl = s => s.sem ? s.sem + '.º' : 'Elec.';
+const short = (t, n=30) => t.length > n ? t.slice(0, n - 1) + '…' : t;
+const esc = t => String(t).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const dec = n => n.toFixed(1).replace('.', ',');
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in (props || {})) {
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (k === 'style' && typeof v === 'object') { for (const p in v) { if (p.startsWith('--')) e.style.setProperty(p, v[p]); else e.style[p] = v[p]; } }
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return e;
+}
+const tip = $('#tip');
+function bindTip(el, content) {
+  el.addEventListener('mousemove', e => {
+    tip.innerHTML = typeof content === 'function' ? content() : content; tip.hidden = false;
+    let x = e.clientX + 14, y = e.clientY + 14;
+    if (x + tip.offsetWidth > innerWidth - 8) x = e.clientX - tip.offsetWidth - 14;
+    if (y + tip.offsetHeight > innerHeight - 8) y = e.clientY - tip.offsetHeight - 14;
+    tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+  });
+  el.addEventListener('mouseleave', () => { tip.hidden = true; });
+  return el;
+}
+const labTag = id => h('span', {class:'tag', style:{'--lc':lc(id)}}, h('span', {class:'dot'}), LB[id].short);
+const prim = l => S.filter(s => s.prim === l);
+const comp = l => S.filter(s => s.comps.includes(l));
+const state = {ex:S.find(s => s.code === 'II742').id, w:20, must:true};
+
+/* 1. Portada */
+function s1() {
+  const cluster = h('div', {class:'cluster', 'aria-hidden':'true'}, S.map((s, i) => h('span', {class:'cd', style:{'--lc':lc(s.prim), '--i':i}})));
+  return h('section', {class:'slide'}, h('div', {class:'hero'},
+    h('div', {class:'txt'}, h('div', {class:'kicker'}, 'Ingeniería Industrial · UTP · FACIEM'),
+      h('h1', null, 'Cada asignatura, con su laboratorio'),
+      h('p', {class:'lead'}, 'Una propuesta para que los 5 laboratorios apoyen a las ' + M.n + ' asignaturas del programa y para que la práctica cuente en la nota.'),
+      h('div', {class:'chips'}, LID.map(labTag)),
+      h('div', null, h('button', {class:'btn', type:'button', onclick:() => go(1)}, 'Empezar →'))),
+    cluster));
+}
+
+/* 2. El problema */
+function s2() {
+  let mode = 'hoy';
+  const num = h('div', {class:'big'}), cap = h('div', {class:'cap'}), legend = h('div', {class:'legend'}), mfill = h('span'), mbar = h('div', {class:'mbar'}, mfill);
+  const detail = h('div', {class:'card'}, h('span', {class:'muted'}, 'Toque un punto para ver la asignatura.'));
+  const dots = S.map(s => {
+    const d = h('button', {type:'button', class:'dt', 'aria-label':s.code + ' ' + s.name, onclick:() => {
+      detail.replaceChildren(h('b', null, s.code + ' · ' + s.name), h('div', {class:'muted'}, 'Hoy: ' + (NOW(s) ? 'nombra ' + s.antes.map(l => LB[l].short).join(' y ') : 'no nombra ningún laboratorio') + '.'),
+        h('div', null, 'Propuesta: ', labTag(s.prim)));
+    }});
+    return bindTip(d, () => '<b>' + esc(s.code + ' ' + s.name) + '</b><br>' + (mode === 'hoy' ? (NOW(s) ? 'Hoy nombra: ' + esc(s.antes.map(l => LB[l].short).join(', ')) : 'Hoy no nombra ningún laboratorio') : 'Propuesta: ' + esc(LB[s.prim].short)));
+  });
+  function paint() {
+    S.forEach((s, i) => { const on = mode === 'prop' || NOW(s); dots[i].style.setProperty('--lc', on ? lc(mode === 'prop' ? s.prim : s.antes[0]) : 'transparent'); dots[i].classList.toggle('off', !on); });
+    num.textContent = mode === 'prop' ? M.n + ' de ' + M.n : M.now + ' de ' + M.n; mfill.style.width = (mode === 'prop' ? 100 : M.now / M.n * 100) + '%';
+    cap.textContent = mode === 'prop' ? 'asignaturas con un laboratorio asignado' : 'asignaturas nombran un laboratorio en su microcurrículo';
+    legend.replaceChildren(...LID.map(labTag), ...(mode === 'hoy' ? [h('span', {class:'tag'}, h('span', {class:'dot', style:{background:'transparent',border:'2px dashed var(--ink3)'}}), 'no nombra ninguno')] : []));
+  }
+  const seg = h('div', {class:'seg', role:'group', 'aria-label':'Vista'}, [['hoy', 'Hoy'], ['prop', 'Propuesta']].map(o => h('button', {type:'button', 'aria-pressed':String(mode === o[0]), onclick:e => { mode = o[0]; [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); paint(); }}, o[1])));
+  const root = h('section', {class:'slide'}, h('div', {class:'kicker'}, 'El problema'),
+    h('h1', null, 'Los laboratorios existen, pero casi no están conectados con las asignaturas'),
+    h('div', {class:'grid g3'},
+      h('div', {class:'card stat'}, h('div', {class:'big'}, M.empty8 + ' de ' + M.n), h('div', {class:'mbar'}, h('span', {style:{width:(M.empty8 / M.n * 100) + '%'}})), h('div', {class:'cap'}, 'asignaturas no describen ninguna práctica de laboratorio o proyecto')),
+      h('div', {class:'card stat'}, h('div', {class:'big'}, M.confirmed + ' de ' + M.claimed), h('div', {class:'mbar'}, h('span', {style:{width:(M.confirmed / M.claimed * 100) + '%'}})), h('div', {class:'cap'}, 'usos que los laboratorios ofrecen aparecen en el documento de la asignatura')),
+      h('div', {class:'card stat'}, num, mbar, cap)),
+    h('div', null, seg), h('div', {class:'dots'}, dots), legend, detail);
+  paint(); return root;
+}
+
+/* 3. Los laboratorios */
+function s3() {
+  return h('section', {class:'slide'}, h('div', {class:'kicker'}, 'Los cinco laboratorios'), h('h1', null, 'Cinco espacios, cada uno con su especialidad'),
+    h('div', {class:'grid g5'}, LID.map(l => {
+      const p = prim(l);
+      return h('div', {class:'card lab', style:{'--lc':lc(l), '--on':'var(--on-' + l.toLowerCase() + ')'}}, h('div', {class:'hd'}, h('span', {class:'badge'}, l), h('h3', null, LB[l].name)), h('p', {class:'muted'}, LB[l].que),
+        h('ul', null, LB[l].sirve.map(x => h('li', null, x))),
+        h('div', {class:'num'}, h('b', null, p.length), ' principal · ' + comp(l).length + ' de apoyo'),
+        h('details', null, h('summary', null, 'Ver las ' + p.length + ' asignaturas'), h('ul', null, p.map(s => h('li', null, s.code + ' ' + s.name)))));
+    })));
+}
+
+/* 4. La propuesta */
+function s4() {
+  const detail = h('div', {class:'card'}, h('span', {class:'muted'}, 'Toque una asignatura para ver por qué quedó en ese laboratorio.'));
+  const pills = [];
+  function pick(s, el) {
+    pills.forEach(p => p.classList.remove('sel')); el.classList.add('sel');
+    detail.replaceChildren(h('div', {class:'chips'}, h('b', null, s.code + ' · ' + s.name), labTag(s.prim)),
+      h('p', null, h('b', null, 'Por qué: '), s.why), h('p', null, h('b', null, 'Qué haría el estudiante: '), s.pract),
+      s.comps.length ? h('div', {class:'chips'}, h('span', {class:'muted'}, 'También apoyan:'), s.comps.map(labTag)) : null,
+      h('div', null, h('button', {class:'ghost', type:'button', onclick:() => { state.ex = s.id; go(4); }}, 'Ver el ejemplo completo →')));
+  }
+  const board = h('div', {class:'board'}, LID.map(l => h('div', {class:'bcol', style:{'--lc':lc(l)}},
+    h('div', {class:'bhead'}, h('span', {class:'dot'}), LB[l].short, h('b', null, prim(l).length)),
+    prim(l).map(s => { const b = h('button', {type:'button', class:'pill', style:{'--lc':lc(l)}}, h('span', {class:'sm'}, semLbl(s) + ' · ' + s.code), short(s.name, 34)); b.addEventListener('click', () => pick(s, b)); pills.push(b); return b; }))));
+  return h('section', {class:'slide'}, h('div', {class:'kicker'}, 'La propuesta'), h('h1', null, 'Cada asignatura tiene un laboratorio principal'),
+    h('p', {class:'lead'}, 'El laboratorio principal es donde se hace la práctica que cuenta en la nota. Otros laboratorios pueden apoyar con sesiones puntuales.'), board, detail);
+}
+
+/* 5. Un ejemplo */
+function s5() {
+  const out = h('div');
+  const sel = h('select', {id:'ex-sel', onchange:e => { state.ex = +e.target.value; draw(); }}, S.map(s => h('option', {value:s.id, selected:s.id === state.ex}, s.code + ' · ' + s.name)));
+  function draw() {
+    const s = S[state.ex];
+    out.replaceChildren(h('div', {class:'flow'},
+      h('div', {class:'card'}, h('h3', null, '1 · Hoy'), s.lab8 && s.lab8 !== '—' ? h('p', null, '«' + s.lab8 + '»') : h('p', {class:'muted'}, 'El documento de la asignatura no describe ninguna práctica de laboratorio.'),
+        s.antes.length ? h('div', {class:'chips', style:{marginTop:'8px'}}, s.antes.map(labTag)) : null),
+      h('div', {class:'arrow'}, '→'),
+      h('div', {class:'card', style:{'--lc':lc(s.prim)}}, h('h3', null, '2 · Propuesta'), h('div', {class:'chips'}, labTag(s.prim)),
+        h('p', {style:{marginTop:'8px'}}, h('b', null, 'El estudiante: '), s.pract), h('p', {style:{marginTop:'6px'}}, h('b', null, 'Entrega: '), s.prod),
+        s.comps.length ? h('div', {class:'chips', style:{marginTop:'8px'}}, h('span', {class:'muted'}, 'Apoyan:'), s.comps.map(labTag)) : null,
+        s.mod ? h('p', {class:'muted', style:{marginTop:'8px'}}, 'Por estar en los primeros semestres participa en talleres y observación, sin asesoría directa.') : null),
+      h('div', {class:'arrow'}, '→'),
+      h('div', {class:'card'}, h('h3', null, '3 · En la nota'), h('div', {class:'big', style:{fontSize:'56px'}}, s.peso + '%'),
+        h('div', {class:'meter'}, h('div', {style:{flex:s.peso + ' 1 0', background:lc(s.prim)}}), h('div', {style:{flex:(100 - s.peso) + ' 1 0', background:'var(--ink3)'}})),
+        h('p', {class:'muted'}, s.horas + ' h de las ' + s.had + ' horas con el profesor.'), h('p', {style:{marginTop:'6px'}}, h('b', null, 'Reemplaza: '), s.conv))));
+  }
+  const root = h('section', {class:'slide'}, h('div', {class:'kicker'}, 'Un ejemplo paso a paso'), h('h1', null, 'No se agrega carga: se convierte un trabajo que ya existe'),
+    h('label', {class:'field', style:{maxWidth:'520px'}}, 'Elija una asignatura', sel), out);
+  draw(); return root;
+}
+
+/* 6. En la nota */
+function s6() {
+  const out = h('div'), lbl = h('b');
+  const ej = [['Ana', 4.5, 2.8], ['Luis', 2.5, 4.4], ['Marta', 3.8, 3.6]];
+  const slider = h('input', {type:'range', id:'w', min:'10', max:'40', step:'5', value:String(state.w), oninput:e => { state.w = +e.target.value; draw(); }});
+  const seg = h('div', {class:'seg', role:'group', 'aria-label':'Regla'}, [[true, 'Sí, hay que aprobarlo'], [false, 'No, solo suma']].map(o => h('button', {type:'button', 'aria-pressed':String(state.must === o[0]), onclick:e => { state.must = o[0]; [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); draw(); }}, o[1])));
+  function draw() {
+    const w = state.w / 100; lbl.textContent = state.w + '%';
+    out.replaceChildren(h('div', {class:'tw'}, h('table', null, h('thead', null, h('tr', null, h('th', null, 'Estudiante (ejemplo)'), h('th', {class:'n'}, 'Nota laboratorio'), h('th', {class:'n'}, 'Nota resto'), h('th', {class:'n'}, 'Nota final'), h('th', null, 'Resultado'))),
+      h('tbody', null, ej.map(r => {
+        const fin = r[1] * w + r[2] * (1 - w), okLab = r[1] >= 3, okFin = fin >= 3, pass = okFin && (!state.must || okLab);
+        const why = pass ? '' : (!okFin ? ' (la nota final es menor de 3,0)' : ' (no aprobó el laboratorio)');
+        return h('tr', null, h('td', null, h('b', null, r[0])), h('td', {class:'n'}, dec(r[1])), h('td', {class:'n'}, dec(r[2])), h('td', {class:'n'}, dec(fin)), h('td', {class:pass ? 'ok' : 'no'}, (pass ? '✓ Aprueba' : '✕ No aprueba') + why));
+      })))));
+  }
+  const root = h('section', {class:'slide'}, h('div', {class:'kicker'}, 'Cómo cuenta en la nota'), h('h1', null, 'El laboratorio vale entre 15 % y 30 % de la nota y hay que aprobarlo'),
+    h('p', {class:'lead'}, 'Esta es la regla recomendada. Mueva el peso o cambie la regla para ver cómo cambia el resultado de tres estudiantes de ejemplo.'),
+    h('div', {class:'grid g3'}, h('div', {class:'card'}, h('label', {class:'field'}, h('span', null, 'Peso del laboratorio: ', lbl), slider)),
+      h('div', {class:'card'}, h('div', {class:'field'}, h('span', null, '¿Hay que aprobar el laboratorio para aprobar la materia?'), seg)),
+      h('div', {class:'card'}, h('p', {class:'muted'}, 'El mínimo aprobatorio de 3,0 es un valor de ejemplo; debe verificarse contra el reglamento estudiantil.'))), out);
+  draw(); return root;
+}
+
+/* 7. Camino del estudiante */
+function s7() {
+  const cols = [];
+  for (let k = 1; k <= 11; k++) {
+    const list = k === 11 ? S.filter(s => s.type === 'Electiva') : S.filter(s => s.sem === k);
+    cols.push(h('div', {class:'c'}, h('h3', null, k === 11 ? 'Electivas' : k + '.º'),
+      list.map(s => { const d = h('span', {class:'dt', style:{'--lc':lc(s.prim)}}); return bindTip(d, () => '<b>' + esc(s.code + ' ' + s.name) + '</b><br>' + esc(LB[s.prim].short)); }),
+      h('span', {class:'muted', style:{fontSize:'12px'}}, list.length)));
+  }
+  return h('section', {class:'slide'}, h('div', {class:'kicker'}, 'El camino del estudiante'), h('h1', null, 'A lo largo de la carrera, el estudiante pasa por los cinco laboratorios'),
+    h('p', {class:'lead'}, 'Cada punto es una asignatura, del color de su laboratorio principal. Las electivas profesionales se ofrecen del 7.º al 10.º semestre.'),
+    h('div', {class:'legend'}, LID.map(labTag)), h('div', {class:'sem'}, cols),
+    h('p', {class:'muted'}, 'El programa tiene 10 semestres; el semestre de cada asignatura se toma del primer dígito de su código, porque los documentos declaran semestres hasta el 12.º. Sirve después para repartir espacios y horarios.'));
+}
+
+/* 8. Qué sigue */
+function s8() {
+  const medio = S.filter(s => s.fit === 'Medio').length;
+  const step = (n, t, p) => h('div', {class:'step'}, h('div', {class:'n'}, n), h('div', null, h('h3', null, t), h('p', null, p)));
+  return h('section', {class:'slide'}, h('div', {class:'kicker'}, 'Qué sigue'), h('h1', null, 'Tres pasos, en este orden'),
+    h('div', {class:'steps'},
+      step(1, 'Validar con los docentes', 'Revisar con quien coordina cada asignatura, empezando por las ' + medio + ' asignaciones de ajuste medio.'),
+      step(2, 'Ajustar los documentos de cada asignatura', 'Agregar la práctica, la entrega y el peso. Corregir 6 tablas de evaluación que no suman 100 %, 3 códigos repetidos y los semestres declarados.'),
+      step(3, 'Asignar espacios y horarios', 'Definir dónde y cuándo funciona cada laboratorio según la demanda de cada semestre.')),
+    h('div', {class:'card'}, h('h3', null, 'Para resolver en paralelo'), h('ul', {class:'risk'},
+      h('li', null, 'Logística: computadores y software obsoletos; solo 4 estudiantes a la vez. Hay una compra aprobada de COP 42,1 millones sin entregar.'),
+      h('li', null, 'Manufactura Flexible: su informe no trae normas de seguridad para robots, CNC y PLC.'),
+      h('li', null, 'Financiero y Consultorio: perdieron su espacio tras el sismo del 10 de agosto de 2026.'))),
+    h('div', null, h('a', {class:'ghost', href:'presentacion/presentacion_interactiva.html'}, 'Ver el análisis detallado →')));
+}
+
+const SLIDES = [
+  ['Portada', s1, ['Resume el análisis de ' + M.n + ' asignaturas y 5 laboratorios del programa.', 'Son 8 pasos: el problema, los laboratorios, la propuesta, un ejemplo, la nota, el camino del estudiante y qué sigue.', 'Microcurrículo es el documento que describe cada asignatura.']],
+  ['El problema', s2, ['Cada punto es una asignatura. Hoy solo ' + M.now + ' nombran un laboratorio.', M.empty8 + ' ni siquiera describen una práctica de laboratorio o proyecto.', 'Los laboratorios ofrecen ' + M.claimed + ' usos y solo ' + M.confirmed + ' aparecen en la asignatura.', 'Pulse «Propuesta» para ver el resultado: las ' + M.n + ' con laboratorio.']],
+  ['Los laboratorios', s3, ['Cinco espacios, cada uno con su tema.', 'El Consultorio no tiene equipos: trabaja con empresas reales.', 'Abra cada tarjeta para ver qué asignaturas tendría.']],
+  ['La propuesta', s4, ['Una asignatura tiene un laboratorio principal, que se evalúa, y puede tener apoyos puntuales.', 'Toque una asignatura para ver por qué quedó ahí.', 'Los casos de ajuste medio se validan con los docentes.']],
+  ['Un ejemplo', s5, ['Elija una asignatura y recorra: hoy, propuesta y nota.', 'Lo importante: no se agrega carga; se convierte un trabajo que la asignatura ya pide.']],
+  ['En la nota', s6, ['Regla recomendada: aprobar el laboratorio para aprobar la materia.', 'Cambie el peso y la regla para ver cómo cambia el resultado de los tres ejemplos.', 'Hay que validarla con el reglamento estudiantil.']],
+  ['El camino', s7, ['Cada punto es una asignatura, coloreada por su laboratorio.', 'Sirve para repartir espacios y horarios en la siguiente etapa.', 'El semestre sale del primer dígito del código; las electivas van del 7.º al 10.º.']],
+  ['Qué sigue', s8, ['Son tres pasos en orden.', 'Los riesgos de abajo se atienden en paralelo.', 'Quien quiera el detalle puede abrir el análisis detallado.']],
+];
+let cur = 0;
+function go(i) { location.hash = 'paso-' + (i + 1); }
+function route() {
+  const m = /^#paso-(\d+)$/.exec(location.hash); cur = m ? Math.min(SLIDES.length - 1, Math.max(0, +m[1] - 1)) : 0;
+  $('#stage').replaceChildren(SLIDES[cur][1]());
+  $('#prog').replaceChildren(...SLIDES.map((s, i) => h('button', {type:'button', title:s[0], class:i < cur ? 'done' : '', 'aria-current':i === cur ? 'step' : null, onclick:() => go(i)}, i === cur ? (i + 1) + ' · ' + s[0] : i + 1)));
+  $('#prev').disabled = cur === 0; $('#next').disabled = cur === SLIDES.length - 1; $('#count').textContent = SLIDES[cur][0] + ' · ' + (cur + 1) + ' de ' + SLIDES.length;
+  const say = $('#say'); say.replaceChildren(h('b', null, 'Para explicar'), h('ul', null, SLIDES[cur][2].map(t => h('li', null, t))));
+  tip.hidden = true; window.scrollTo(0, 0);
+}
+$('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
+$('#say-btn').onclick = e => { const b = e.currentTarget, on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); $('#say').hidden = !on; document.body.classList.toggle('has-say', on); };
+$('#theme').onclick = () => { const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; };
+addEventListener('hashchange', route);
+addEventListener('keydown', e => { if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return; if (e.key === 'ArrowRight' && cur < SLIDES.length - 1) go(cur + 1); if (e.key === 'ArrowLeft' && cur > 0) go(cur - 1); });
+$('#mark').replaceChildren(...LID.map(l => h('i', {style:{'--lc':lc(l)}})), h('i', {style:{'--lc':'var(--ink3)'}}));
+route();
+</script>
+</body>
+</html>
